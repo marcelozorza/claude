@@ -103,40 +103,21 @@ const DIAS = ['SEG', 'TER', 'QUA', 'QUI', 'SEX'];
 const exame = (ctx, t) => {
   camera(ctx, t, {z: 1 + 0.03 * suave(t / 14), cy: 640});
   papel(ctx);
+  // Só o calendário, no meio da área útil. O marca-texto passa de dia em dia até a sexta.
   const dia = Math.min(4, Math.floor(Math.max(0, t - 3) / 1.9));
-  const noDia = Math.max(0, t - 3) - dia * 1.9;
   const xs = [150, 345, 540, 735, 930];
+  const y0 = 540;
   DIAS.forEach((d, i) => {
-    surge(ctx, (t - 1.4 - i * 0.12) / 0.4, xs[i], 360, () => {
-      recorte(ctx, [[xs[i] - 82, 260], [xs[i] + 82, 262], [xs[i] + 80, 460], [xs[i] - 81, 458]], {cor: '#FBF6E9', borda: 6, seed: 60 + i});
-      recorte(ctx, [[xs[i] - 82, 260], [xs[i] + 82, 262], [xs[i] + 82, 305], [xs[i] - 82, 305]], {cor: i === 4 ? CORAL : '#8C9BA3', seed: 70 + i, sombra: null});
-      texto(ctx, d, {x: xs[i], y: 284, tam: 36, fonte: 'Oswald', peso: '600', cor: '#FBF6E9'});
+    surge(ctx, (t - 1.4 - i * 0.12) / 0.4, xs[i], y0 + 100, () => {
+      recorte(ctx, [[xs[i] - 82, y0], [xs[i] + 82, y0 + 2], [xs[i] + 80, y0 + 200], [xs[i] - 81, y0 + 198]], {cor: '#FBF6E9', borda: 6, seed: 60 + i});
+      recorte(ctx, [[xs[i] - 82, y0], [xs[i] + 82, y0 + 2], [xs[i] + 82, y0 + 45], [xs[i] - 82, y0 + 45]], {cor: i === 4 ? CORAL : '#8C9BA3', seed: 70 + i, sombra: null});
+      texto(ctx, d, {x: xs[i], y: y0 + 24, tam: 36, fonte: 'Oswald', peso: '600', cor: '#FBF6E9'});
       if (i === 4) {
-        adesivo(ctx, 'envelope', 930, 388, 120, {borda: 6});
-      } else texto(ctx, '?', {x: xs[i], y: 385, tam: 70, fonte: 'Caveat', cor: '#8C9BA3'});
+        adesivo(ctx, 'envelope', 930, y0 + 128, 120, {borda: 6});
+      } else texto(ctx, '?', {x: xs[i], y: y0 + 125, tam: 70, fonte: 'Caveat', cor: '#8C9BA3'});
     });
   });
-  if (t > 3 && t < 12.6) marcador(ctx, xs[dia] - 90, 360, 180, 210, 1, {cor: 'rgba(255,214,10,0.35)', seed: 90 + dia});
-  // Riscos de contagem: cada volta ao assunto, cinco por grupo.
-  let total = 0;
-  for (let i = 0; i <= Math.min(dia, 3); i++) {
-    const n = i < dia ? 20 : Math.min(20, Math.floor(noDia / 1.9 * 20));
-    for (let k = 0; k < n; k++) {
-      const g = Math.floor(k / 5);
-      const j = k % 5;
-      const x0 = xs[i] - 55 + j * 18;
-      const y0 = 520 + g * 88;
-      if (j < 4) pincel(ctx, [[x0, y0], [x0 + 3, y0 + 64]], {larg: 6, seed: 100 + i * 40 + k, seco: 0.2});
-      else pincel(ctx, [[xs[i] - 62, y0 + 50], [xs[i] + 22, y0 + 12]], {larg: 6, cor: CORAL, seed: 100 + i * 40 + k, seco: 0.2});
-    }
-    total += n;
-  }
-  texto(ctx, `${total}`, {y: 1010, tam: 110, fonte: 'Oswald', peso: '600', p: t > 3 ? 1 : 0});
-  // A informação nova: zero até sexta.
-  const sexta = t > 11.1;
-  texto(ctx, 'informação nova:', {x: 480, y: 1170, tam: 40, alinha: 'right', p: (t - 4) / 0.8});
-  texto(ctx, sexta ? '1' : '0', {x: 540, y: 1170, tam: 74, fonte: 'Oswald', peso: '600', cor: sexta ? CORAL : TINTA, p: (t - 4.6) / 0.2});
-  if (sexta) pincel(ctx, laco(540, 1170, 60, 58, 91), {larg: 7, cor: CORAL, seed: 92, p: suave((t - 11.3) / 0.6)});
+  if (t > 3 && t < 12.6) marcador(ctx, xs[dia] - 90, y0 + 100, 180, 210, 1, {cor: 'rgba(255,214,10,0.35)', seed: 90 + dia});
 };
 
 // Cena 29: bpm mostrado e fase acumulada da batida (integral do bpm), para desenho e som baterem juntos.
@@ -254,26 +235,21 @@ const sonsPanico = () => {
 export const CENAS = {
   '08-raichle': {f: raichle, dur: 12, sons: [
     [0.05, 'etiqueta'], [0.3, 'pop'], [2.2, 'bip', 0.8],
-    [5.4, 'caneta', 0.7], [5.85, 'caneta', 0.7], [6.3, 'caneta', 0.7], [6.75, 'caneta', 0.7],
   ]},
   '13-sem-botao': {f: interruptor, dur: 8, sons: [
     [0.8, 'pop'],
     [1.4, 'clique'], [1.9, 'clique', 0.7], [3.2, 'clique'], [3.6, 'clique', 0.7],
     [4.7, 'clique'], [5.0, 'clique', 0.7], [5.9, 'clique'], [6.15, 'clique', 0.7],
-    [6.4, 'caneta'],
   ]},
   '19-exame': {f: exame, dur: 14, sons: [
     ...[0, 1, 2, 3, 4].map((i) => [1.4 + i * 0.12, 'pop', 0.7]),
-    ...[0, 1, 2, 3].flatMap((d) => [[3 + d * 1.9, 'caneta', 0.8], [3.95 + d * 1.9, 'caneta', 0.8]]),
-    [4.6, 'bip'], [11.1, 'bip', 1.3], [11.3, 'caneta'],
   ]},
   '22a-choque-sala': {f: choqueSala, dur: 9, sons: [
     [0.05, 'etiqueta'], [0.6, 'pop'], [1.0, 'pop'],
-    [1.4, 'caneta'], [2.35, 'caneta', 0.8], [3.2, 'caneta', 0.6], [3.6, 'caneta'],
     [7.0, 'clique'], [7.03, 'zap'],
   ]},
   '22b-choque-resultado': {f: choqueResultado, dur: 9, sons: [
-    [1.4, 'swoosh'], [1.75, 'swoosh'], [4.4, 'caneta'],
+    [1.4, 'swoosh'], [1.75, 'swoosh'],
   ]},
   '29-panico': {f: panico, dur: 16, sons: sonsPanico()},
   '33-dois-estados': {f: doisEstados, dur: 12, sons: [
