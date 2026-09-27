@@ -1,4 +1,4 @@
-import {CORAL, IMAGENS, adesivo, recorte, salta} from './estilo';
+import {CORAL, IMAGENS, adesivo, balanco, recorte, salta} from './estilo';
 
 // Cérebro: emoji 3D da Microsoft (Fluent Emoji, licença MIT), de lado, a frente virada para a esquerda.
 // Unidades onde a largura do cérebro é 1 e o centro dele é (0, 0).
@@ -19,11 +19,12 @@ export const cerebro = (ctx, {cx, cy, s = 600, rede = 0, tarefa = 0, p = 1, puls
   ctx.save();
   ctx.translate(cx, cy);
   ctx.scale(e, e);
+  ctx.rotate(balanco(cx, cy, s / 2));
   ctx.translate(-cx, -cy);
   const tam = s / LARG;
   const [ix, iy] = [cx + DX * s, cy + DY * s];
   ctx.imageSmoothingQuality = 'high';
-  adesivo(ctx, 'brain', ix, iy, tam, {borda: Math.max(8, s * 0.018)});
+  adesivo(ctx, 'brain', ix, iy, tam, {borda: Math.max(8, s * 0.018), fixo: true});
   // As regiões acendem por cima do emoji, presas ao contorno dele.
   const im = IMAGENS.brain;
   const acende = (lista, cor, k) => {

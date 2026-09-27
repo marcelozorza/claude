@@ -22,6 +22,26 @@ export const salta = (v) => {
 };
 export const mistura = (a, b, k) => a + (b - a) * k;
 
+// Tempo da cena em segundos, atualizado a cada quadro antes do desenho.
+export const RELOGIO = {t: 0};
+// Balanço de vida: depois de entrar, cada peça oscila alguns graus em torno do próprio centro.
+// A fase vem da posição, para as peças não balançarem juntas. Peças grandes giram menos.
+export const balanco = (cx, cy, raio = 150) => {
+  const fase = cx * 0.0131 + cy * 0.0077;
+  const freq = 0.3 + 0.12 * ((Math.sin(fase * 7.3) + 1) / 2);
+  const amp = Math.min((3 * Math.PI) / 180, 12 / Math.max(1, raio));
+  return amp * Math.sin(RELOGIO.t * freq * Math.PI * 2 + fase);
+};
+// Desenha girando em torno de (cx, cy) com o balanço daquela peça.
+export const gira = (ctx, cx, cy, raio, desenha) => {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(balanco(cx, cy, raio));
+  ctx.translate(-cx, -cy);
+  desenha();
+  ctx.restore();
+};
+
 // O papel: areia, fibras, quadriculado fino e grosso, bordas um pouco mais escuras.
 let PAPEL = null;
 const fazPapel = () => {
@@ -204,6 +224,10 @@ export const texto = (ctx, str, {x = W / 2, y, tam = 48, fonte = 'EB Garamond', 
   ctx.textBaseline = 'middle';
   if (etiqueta) {
     const w = ctx.measureText(str).width;
+    const xc = alinha === 'center' ? x : alinha === 'right' ? x - w / 2 : x + w / 2;
+    ctx.translate(xc, y);
+    ctx.rotate(balanco(xc, y, w / 2 + 22));
+    ctx.translate(-xc, -y);
     const x0 = alinha === 'center' ? x - w / 2 : alinha === 'right' ? x - w : x;
     recorte(ctx, [[x0 - 22, y - tam * 0.75], [x0 + w + 22, y - tam * 0.7], [x0 + w + 20, y + tam * 0.72], [x0 - 20, y + tam * 0.75]], {cor: etiqueta, seed: str.length});
     ctx.font = `${estilo} ${peso} ${tam}px "${fonte}"`;
@@ -226,7 +250,7 @@ export {spline};
 // Imagens (emojis 3D da Microsoft, licença MIT), carregadas antes do desenho.
 export const IMAGENS = {};
 // Cola uma imagem como adesivo recortado: contorno branco e sombra sobre o papel.
-export const adesivo = (ctx, nome, cx, cy, tam, {borda = 10, sombra = [7, 12, 16, 0.3], giro = 0} = {}) => {
+export const adesivo = (ctx, nome, cx, cy, tam, {borda = 10, sombra = [7, 12, 16, 0.3], giro = 0, fixo = false} = {}) => {
   const im = IMAGENS[nome];
   if (!im) return;
   const S = Math.ceil(tam + borda * 2 + 4);
@@ -248,7 +272,7 @@ export const adesivo = (ctx, nome, cx, cy, tam, {borda = 10, sombra = [7, 12, 16
   c.drawImage(im, o, o, tam, tam);
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.rotate(giro);
+  ctx.rotate(giro + (fixo ? 0 : balanco(cx, cy, tam / 2)));
   const [dx, dy, blur, a] = sombra;
   ctx.shadowColor = `rgba(60,40,10,${a})`;
   ctx.shadowBlur = blur;

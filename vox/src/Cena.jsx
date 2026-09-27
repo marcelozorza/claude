@@ -2,7 +2,7 @@ import React, {useLayoutEffect, useRef} from 'react';
 import {AbsoluteFill, continueRender, delayRender, staticFile, useCurrentFrame} from 'remotion';
 import {CENAS, FPS} from './vox/cenas';
 import {tamanho} from './lib/util';
-import {IMAGENS} from './vox/estilo';
+import {IMAGENS, RELOGIO} from './vox/estilo';
 
 const FONTES = [['Special Elite', 'special-elite', {}], ['Caveat', 'caveat', {}], ['Oswald', 'oswald', {}], ['EB Garamond', 'eb-garamond', {}], ['EB Garamond', 'eb-garamond-italic', {style: 'italic'}]];
 const EMOJIS = ['airplane', 'alarm_clock', 'anxious_face_with_sweat', 'brain', 'calendar', 'cooking', 'envelope', 'high_voltage', 'light_bulb', 'magnifying_glass_tilted_left', 'microscope', 'mobile_phone', 'person_in_lotus_position', 'pot_of_food', 'radio_button', 'red_circle', 'red_heart', 'stopwatch', 'thought_balloon', 'violin', 'yarn'];
@@ -25,6 +25,7 @@ export const Cena = ({id}) => {
       const ctx = ref.current.getContext('2d');
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, 1080, 1920);
+      RELOGIO.t = q / FPS;
       CENAS[id].f(ctx, q / FPS, q);
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       continueRender(espera);

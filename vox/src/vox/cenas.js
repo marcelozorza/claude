@@ -1,18 +1,20 @@
 import {W, ellipse} from '../lib/util';
 
-import {AZUL, CORAL, CREME, TINTA, adesivo, botao3d, interruptor3d, camera, laco, marcador, mistura, papel, pincel, recorte, salta, seta, suave, texto} from './estilo';
+import {AZUL, CORAL, CREME, TINTA, adesivo, balanco, gira, botao3d, interruptor3d, camera, laco, marcador, mistura, papel, pincel, recorte, salta, seta, suave, texto} from './estilo';
 import {cerebro, coracaoPapel} from './cerebro';
 
 // Cenas de infográfico no estilo Vox, 1080 x 1920, 30 quadros por segundo.
 export const FPS = 30;
 
 // Faz uma peça surgir com um pequeno salto de escala em torno de (cx, cy).
-const surge = (ctx, k, cx, cy, desenha) => {
+// raio: tamanho aproximado da peça, para o balanço (peças grandes giram menos).
+const surge = (ctx, k, cx, cy, desenha, raio = 150) => {
   if (k <= 0) return;
   const e = salta(k);
   ctx.save();
   ctx.translate(cx, cy);
   ctx.scale(e, e);
+  ctx.rotate(balanco(cx, cy, raio));
   ctx.translate(-cx, -cy);
   desenha();
   ctx.restore();
@@ -75,9 +77,9 @@ const raichle = (ctx, t) => {
   // O cérebro de quem está parado, sem fazer nada: as regiões acendem uma a uma.
   const r = suave((t - 2.2) / 3);
   cerebro(ctx, {cx: 540, cy: 680, s: 740, rede: r, pulso: Math.sin(t * 4) * r, p: suave((t - 0.3) / 1.6), seed: 6});
-  [[-0.39, -0.06], [0.2, -0.26], [0.34, -0.06], [0.0, 0.2]].forEach(([x, y], i) => {
+  gira(ctx, 540, 680, 740 / 2, () => [[-0.39, -0.06], [0.2, -0.26], [0.34, -0.06], [0.0, 0.2]].forEach(([x, y], i) => {
     pincel(ctx, laco(540 + x * 740, 680 + y * 740, 100, 80, 30 + i), {larg: 7, cor: CORAL, seed: 40 + i, p: suave((t - 5.4 - i * 0.45) / 0.6)});
-  });
+  }));
 };
 
 // Cena 13. Não tem botão de desligar: o interruptor desce, a rede apaga e volta sozinha.
@@ -93,7 +95,7 @@ const interruptor = (ctx, t) => {
     interruptor3d(ctx, 540, 1010, off);
   });
   if (off) [[680, 980, 730, 960], [690, 1020, 745, 1020], [680, 1060, 730, 1080]].forEach(([a, b, c, d], i) => pincel(ctx, [[a, b], [c, d]], {larg: 6, seed: 40 + i, seco: 0}));
-  pincel(ctx, laco(540, 520, 290, 210, 13), {larg: 8, cor: CORAL, seed: 14, p: suave((t - 6.4) / 0.8)});
+  gira(ctx, 540, 520, 470 / 2, () => pincel(ctx, laco(540, 520, 290, 210, 13), {larg: 8, cor: CORAL, seed: 14, p: suave((t - 6.4) / 0.8)}));
 };
 
 // Cena 19. O exame de sexta: a mente volta ao assunto dezenas de vezes por dia, sem nenhuma informação nova.
@@ -210,8 +212,8 @@ const doisEstados = (ctx, t) => {
     texto(ctx, `${bpm} bpm`, {x: 830, y: cy + 95, tam: 40, fonte: 'Oswald', peso: '600'});
     ecg(ctx, 110, 970, y0 + 465, t, bpm, 295 + seed, cor);
   };
-  surge(ctx, (t - 0.2) / 0.5, 540, 375, () => painel(110, 5, {situacao: 'airplane', giro: -0.15, rede: suave((t - 0.8) / 0.8), pulso: Math.sin(t * 7), bpm: 132, cor: CORAL}));
-  surge(ctx, (t - 2.6) / 0.5, 540, 935, () => painel(670, 6, {situacao: 'yarn', giro: -0.05, rede: 0.3 * suave((t - 3.2) / 0.8), tarefa: 0.5 * suave((t - 3.2) / 0.8), bpm: 66, cor: AZUL}));
+  surge(ctx, (t - 0.2) / 0.5, 540, 375, () => painel(110, 5, {situacao: 'airplane', giro: -0.15, rede: suave((t - 0.8) / 0.8), pulso: Math.sin(t * 7), bpm: 132, cor: CORAL}), 470);
+  surge(ctx, (t - 2.6) / 0.5, 540, 935, () => painel(670, 6, {situacao: 'yarn', giro: -0.05, rede: 0.3 * suave((t - 3.2) / 0.8), tarefa: 0.5 * suave((t - 3.2) / 0.8), bpm: 66, cor: AZUL}), 470);
 };
 
 export const CENAS = {
