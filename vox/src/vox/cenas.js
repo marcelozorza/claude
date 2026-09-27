@@ -139,6 +139,17 @@ const exame = (ctx, t) => {
   if (sexta) pincel(ctx, laco(540, 1170, 60, 58, 91), {larg: 7, cor: CORAL, seed: 92, p: suave((t - 11.3) / 0.6)});
 };
 
+// Cena 29: bpm mostrado e fase acumulada da batida (integral do bpm), para desenho e som baterem juntos.
+const voltaPanico = (t) => (t < 1.5 ? 0 : Math.pow((t - 1.5) / 14.5, 1.6) * 5);
+const bpmPanico = (t) => 70 + voltaPanico(t) * 22;
+const FASE_PANICO = (() => {
+  const passo = 1 / 240;
+  const f = [0];
+  for (let i = 1; i <= 16 * 240; i++) f.push(f[i - 1] + (bpmPanico((i - 0.5) * passo) / 60) * passo);
+  return f;
+})();
+const fasePanico = (t) => FASE_PANICO[Math.max(0, Math.min(FASE_PANICO.length - 1, Math.round(t * 240)))];
+
 // Cena 29. O ciclo do pânico: seis etapas em roda, e uma bolinha que gira cada vez mais rápido.
 const ETAPAS = [['pensamento', 'ruim'], ['adrenalina'], ['coração e', 'respiração', 'disparam'], ['o cérebro', 'percebe'], ['medo do', 'próprio corpo'], ['"vou', 'morrer"']];
 const panico = (ctx, t) => {
@@ -147,7 +158,7 @@ const panico = (ctx, t) => {
   const C = [540, 690];
   const R = 390;
   // Posição da bolinha: cada volta mais rápida.
-  const volta = t < 1.5 ? 0 : Math.pow((t - 1.5) / 14.5, 1.6) * 5;
+  const volta = voltaPanico(t);
   const ang = (i) => -Math.PI / 2 + (i / 6) * Math.PI * 2;
   for (let i = 0; i < 6; i++) {
     const a0 = ang(i) + 0.3;
@@ -173,11 +184,10 @@ const panico = (ctx, t) => {
     const a = ang(0) + volta * Math.PI * 2;
     recorte(ctx, ellipse(C[0] + Math.cos(a) * R, C[1] + Math.sin(a) * R, 22, 22, 20), {cor: CORAL, seed: 240, sombra: [3, 5, 6, 0.35]});
   }
-  // No centro, o coração acelera junto.
-  const freq = 1.1 + volta * 0.9;
-  const bate = Math.max(0, Math.sin(t * freq * Math.PI * 2)) ** 6;
+  // No centro, o coração acelera junto, no ritmo exato do bpm escrito.
+  const bate = Math.max(0, Math.sin(fasePanico(t) * Math.PI * 2)) ** 6;
   adesivo(ctx, 'red_heart', C[0], C[1] + 10, 230 * (1 + 0.12 * bate));
-  texto(ctx, `${Math.round(70 + volta * 22)} bpm`, {x: C[0], y: C[1] + 170, tam: 40, fonte: 'Oswald', peso: '600', p: t > 2 ? 1 : 0});
+  texto(ctx, `${Math.round(bpmPanico(t))} bpm`, {x: C[0], y: C[1] + 170, tam: 40, fonte: 'Oswald', peso: '600', p: t > 2 ? 1 : 0});
 };
 
 // Linha de batimento que corre da direita para a esquerda.
@@ -216,16 +226,59 @@ const doisEstados = (ctx, t) => {
   surge(ctx, (t - 2.6) / 0.5, 540, 935, () => painel(670, 6, {situacao: 'yarn', giro: -0.05, rede: 0.3 * suave((t - 3.2) / 0.8), tarefa: 0.5 * suave((t - 3.2) / 0.8), bpm: 66, cor: AZUL}), 470);
 };
 
+// Sons: batidas de coração nos picos da animação (sin(t * f * 2π) no máximo), entre t0 e t1.
+const batidas = (t0, t1, f, k = 1) => {
+  const r = [];
+  for (let n = Math.ceil(t0 * f - 0.25); (n + 0.25) / f < t1; n++) r.push([(n + 0.25) / f, 'coracao', k]);
+  return r;
+};
+// Cena 29: uma batida em cada pico do desenho do coração.
+const sonsPanico = () => {
+  const r = [[0.05, 'pop']];
+  for (let q = 1; q < 16 * 30; q++) {
+    const t = q / 30;
+    if (Math.floor(fasePanico(t) - 0.25) > Math.floor(fasePanico(t - 1 / 30) - 0.25)) r.push([t, 'coracao', 0.8]);
+  }
+  // Cada caixa entra quando a bolinha chega perto dela.
+  for (let i = 1; i < 6; i++) {
+    for (let q = 0; q < 16 * 30; q++) {
+      if (voltaPanico(q / 30) * 6 - i + 0.6 > 0) {
+        r.push([q / 30, 'pop']);
+        break;
+      }
+    }
+  }
+  return r;
+};
+
 export const CENAS = {
-  '08-raichle': {f: raichle, dur: 12},
-  '13-sem-botao': {f: interruptor, dur: 8},
-  '19-exame': {f: exame, dur: 14},
+  '08-raichle': {f: raichle, dur: 12, sons: [
+    [0.05, 'etiqueta'], [0.3, 'pop'], [2.2, 'bip', 0.8],
+    [5.4, 'caneta', 0.7], [5.85, 'caneta', 0.7], [6.3, 'caneta', 0.7], [6.75, 'caneta', 0.7],
+  ]},
+  '13-sem-botao': {f: interruptor, dur: 8, sons: [
+    [0.8, 'pop'],
+    [1.4, 'clique'], [1.9, 'clique', 0.7], [3.2, 'clique'], [3.6, 'clique', 0.7],
+    [4.7, 'clique'], [5.0, 'clique', 0.7], [5.9, 'clique'], [6.15, 'clique', 0.7],
+    [6.4, 'caneta'],
+  ]},
+  '19-exame': {f: exame, dur: 14, sons: [
+    ...[0, 1, 2, 3, 4].map((i) => [1.4 + i * 0.12, 'pop', 0.7]),
+    ...[0, 1, 2, 3].flatMap((d) => [[3 + d * 1.9, 'caneta', 0.8], [3.95 + d * 1.9, 'caneta', 0.8]]),
+    [4.6, 'bip'], [11.1, 'bip', 1.3], [11.3, 'caneta'],
+  ]},
   '22a-choque-sala': {f: choqueSala, dur: 9, sons: [
     [0.05, 'etiqueta'], [0.6, 'pop'], [1.0, 'pop'],
     [1.4, 'caneta'], [2.35, 'caneta', 0.8], [3.2, 'caneta', 0.6], [3.6, 'caneta'],
     [7.0, 'clique'], [7.03, 'zap'],
   ]},
-  '22b-choque-resultado': {f: choqueResultado, dur: 9},
-  '29-panico': {f: panico, dur: 16},
-  '33-dois-estados': {f: doisEstados, dur: 12},
+  '22b-choque-resultado': {f: choqueResultado, dur: 9, sons: [
+    [1.4, 'swoosh'], [1.75, 'swoosh'], [4.4, 'caneta'],
+  ]},
+  '29-panico': {f: panico, dur: 16, sons: sonsPanico()},
+  '33-dois-estados': {f: doisEstados, dur: 12, sons: [
+    [0.2, 'pop'], [2.6, 'pop'],
+    ...batidas(0.4, 12, 132 / 60, 0.6),
+    ...batidas(2.8, 12, 66 / 60, 0.6),
+  ]},
 };
