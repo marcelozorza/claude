@@ -220,7 +220,11 @@ export const CENAS = {
   '08-raichle': {f: raichle, dur: 12},
   '13-sem-botao': {f: interruptor, dur: 8},
   '19-exame': {f: exame, dur: 14},
-  '22a-choque-sala': {f: choqueSala, dur: 9},
+  '22a-choque-sala': {f: choqueSala, dur: 9, sons: [
+    [0.05, 'etiqueta'], [0.6, 'pop'], [1.0, 'pop'],
+    [1.4, 'caneta'], [2.35, 'caneta', 0.8], [3.2, 'caneta', 0.6], [3.6, 'caneta'],
+    [7.0, 'clique'], [7.03, 'zap'],
+  ]},
   '22b-choque-resultado': {f: choqueResultado, dur: 9},
   '29-panico': {f: panico, dur: 16},
   '33-dois-estados': {f: doisEstados, dur: 12},

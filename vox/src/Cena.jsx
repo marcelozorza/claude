@@ -1,8 +1,9 @@
 import React, {useLayoutEffect, useRef} from 'react';
-import {AbsoluteFill, continueRender, delayRender, staticFile, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, Audio, Sequence, continueRender, delayRender, staticFile, useCurrentFrame} from 'remotion';
 import {CENAS, FPS} from './vox/cenas';
 import {tamanho} from './lib/util';
 import {IMAGENS, RELOGIO} from './vox/estilo';
+import {arquivos} from './vox/sons';
 
 const FONTES = [['Special Elite', 'special-elite', {}], ['Caveat', 'caveat', {}], ['Oswald', 'oswald', {}], ['EB Garamond', 'eb-garamond', {}], ['EB Garamond', 'eb-garamond-italic', {style: 'italic'}]];
 const EMOJIS = ['airplane', 'alarm_clock', 'anxious_face_with_sweat', 'brain', 'calendar', 'cooking', 'envelope', 'high_voltage', 'light_bulb', 'magnifying_glass_tilted_left', 'microscope', 'mobile_phone', 'person_in_lotus_position', 'pot_of_food', 'radio_button', 'red_circle', 'red_heart', 'stopwatch', 'thought_balloon', 'violin', 'yarn'];
@@ -34,6 +35,11 @@ export const Cena = ({id}) => {
   return (
     <AbsoluteFill style={{background: '#000'}}>
       <canvas ref={ref} width={1080} height={1920} />
+      {arquivos(CENAS[id].sons || []).map(({t, arq, vol}, i) => (
+        <Sequence key={i} from={Math.round(t * FPS)} layout="none">
+          <Audio src={staticFile(arq)} volume={vol} />
+        </Sequence>
+      ))}
     </AbsoluteFill>
   );
 };
