@@ -3,6 +3,9 @@ import {W, ellipse} from '../lib/util';
 import {AZUL, CORAL, CREME, TINTA, adesivo, balanco, gira, botao3d, interruptor3d, camera, laco, marcador, mistura, papel, pincel, recorte, salta, seta, suave, texto} from './estilo';
 import {cerebro, coracaoPapel} from './cerebro';
 import {CENAS2} from './cenas2';
+import {CENAS3} from './cenas3';
+import {CENAS4} from './cenas4';
+import {CENAS5} from './cenas5';
 
 // Cenas de infográfico no estilo Vox, 1080 x 1920, 30 quadros por segundo.
 export const FPS = 30;
@@ -254,6 +257,9 @@ export const CENAS = {
   ]},
   '29-panico': {f: panico, dur: 16, sons: sonsPanico()},
   ...CENAS2,
+  ...CENAS3,
+  ...CENAS4,
+  ...CENAS5,
   '33-dois-estados': {f: doisEstados, dur: 12, sons: [
     [0.2, 'pop'], [2.6, 'pop'],
     ...batidas(0.4, 12, 132 / 60, 0.6),
