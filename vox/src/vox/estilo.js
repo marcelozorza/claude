@@ -282,6 +282,59 @@ export const adesivo = (ctx, nome, cx, cy, tam, {borda = 10, sombra = [7, 12, 16
   ctx.restore();
 };
 
+// Foto impressa jogada sobre o papel: entra de fora girando e erguida, derrapa, assenta inclinada e balança.
+// larg: largura da foto com a borda. de: ângulo de onde ela vem (radianos, 0 = direita). corte: [x, y, w, h] em frações da imagem.
+export const foto = (ctx, t, t0, nome, cx, cy, larg, {giro = 0.05, de = 0.6, corte = null, prop = null} = {}) => {
+  const im = IMAGENS['foto/' + nome];
+  const k = (t - t0) / 0.6;
+  if (!im || k <= 0) return;
+  const [sx, sy, sw, sh] = corte ? [corte[0] * im.width, corte[1] * im.height, corte[2] * im.width, corte[3] * im.height] : [0, 0, im.width, im.height];
+  const razao = prop || sw / sh;
+  const borda = larg * 0.045;
+  const w = larg - borda * 2;
+  const h = w / razao;
+  // Voo: sai de longe e desacelera, com um pequeno passo além do ponto e volta.
+  const u = Math.min(1, k);
+  const vai = 1 - Math.pow(1 - u, 3);
+  const passa = Math.sin(Math.min(1, k) * Math.PI) * 0.04;
+  const dist = 1500 * (1 - vai) - 30 * passa;
+  const x = cx + Math.cos(de) * dist;
+  const y = cy + Math.sin(de) * dist;
+  const ergue = 1 - suave(Math.min(1, k * 1.15));
+  const ang = giro + (1 - vai) * 0.9 * (Math.cos(de) >= 0 ? 1 : -1) + (k >= 1 ? balanco(cx, cy, larg / 2) : 0);
+  const esc = 1 + 0.08 * ergue;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(ang);
+  ctx.scale(esc, esc);
+  ctx.shadowColor = `rgba(60,40,10,${0.3 + 0.1 * ergue})`;
+  ctx.shadowBlur = 16 + 30 * ergue;
+  ctx.shadowOffsetX = 8 + 26 * ergue;
+  ctx.shadowOffsetY = 14 + 40 * ergue;
+  ctx.fillStyle = '#FFFDF6';
+  ctx.fillRect(-larg / 2, -(h + borda * 2) / 2, larg, h + borda * 2);
+  ctx.shadowColor = 'transparent';
+  ctx.imageSmoothingQuality = 'high';
+  // A imagem cobre a janela da foto, sem deformar.
+  const r0 = sw / sh;
+  let [cx0, cy0, cw, ch] = [sx, sy, sw, sh];
+  if (r0 > razao) {
+    cw = sh * razao;
+    cx0 = sx + (sw - cw) / 2;
+  } else {
+    ch = sw / razao;
+    cy0 = sy + (sh - ch) / 2;
+  }
+  ctx.drawImage(im, cx0, cy0, cw, ch, -w / 2, -h / 2, w, h);
+  // Um brilho leve de papel fotográfico.
+  const g = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
+  g.addColorStop(0, 'rgba(255,255,255,0.10)');
+  g.addColorStop(0.5, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(-w / 2, -h / 2, w, h);
+  ctx.restore();
+};
+
 // Botão vermelho em volume, no mesmo acabamento dos emojis 3D: caixa escura e cúpula brilhante.
 export const botao3d = (ctx, cx, cy, r, aperta = 0) => {
   ctx.save();

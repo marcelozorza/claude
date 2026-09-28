@@ -13,7 +13,8 @@ export const REDE = [[-0.39, -0.06, 0.1, 0.085], [0.2, -0.26, 0.09, 0.075], [0.3
 export const TAREFA = [[-0.24, -0.25, 0.085, 0.07], [-0.07, -0.3, 0.07, 0.06], [0.13, -0.13, 0.08, 0.065]];
 
 // rede e tarefa: intensidade de 0 a 1 de cada rede. p: entrada do adesivo (0 a 1, com salto).
-export const cerebro = (ctx, {cx, cy, s = 600, rede = 0, tarefa = 0, p = 1, pulso = 0, seed = 1} = {}) => {
+// regioes: intensidade de cada região da rede, uma a uma (substitui rede).
+export const cerebro = (ctx, {cx, cy, s = 600, rede = 0, tarefa = 0, p = 1, pulso = 0, seed = 1, regioes = null} = {}) => {
   if (p <= 0) return;
   const e = p < 1 ? salta(p) : 1;
   ctx.save();
@@ -27,8 +28,8 @@ export const cerebro = (ctx, {cx, cy, s = 600, rede = 0, tarefa = 0, p = 1, puls
   adesivo(ctx, 'brain', ix, iy, tam, {borda: Math.max(8, s * 0.018), fixo: true});
   // As regiões acendem por cima do emoji, presas ao contorno dele.
   const im = IMAGENS.brain;
-  const acende = (lista, cor, k) => {
-    if (k <= 0.01 || !im) return;
+  const acende = (lista, cor, k, ks = null) => {
+    if ((ks ? Math.max(...ks) : k) <= 0.01 || !im) return;
     const S = Math.ceil(tam);
     const cv = document.createElement('canvas');
     cv.width = S;
@@ -38,6 +39,8 @@ export const cerebro = (ctx, {cx, cy, s = 600, rede = 0, tarefa = 0, p = 1, puls
     // Brilho: núcleo claro e halo na cor da rede.
     const [r, g, b] = cor === CORAL ? [255, 96, 40] : [40, 140, 210];
     lista.forEach(([x, y, rx], i) => {
+      if (ks) k = ks[i] || 0;
+      if (k <= 0.01) return;
       const bt = 1 + pulso * 0.08 * Math.sin(i * 1.7);
       const gx = S / 2 + (x - DX) * s;
       const gy = S / 2 + (y - DY) * s;
@@ -55,7 +58,7 @@ export const cerebro = (ctx, {cx, cy, s = 600, rede = 0, tarefa = 0, p = 1, puls
     ctx.drawImage(cv, ix - S / 2, iy - S / 2);
   };
   acende(TAREFA, 'azul', tarefa);
-  acende(REDE, CORAL, rede);
+  acende(REDE, CORAL, rede, regioes);
   ctx.restore();
 };
 
