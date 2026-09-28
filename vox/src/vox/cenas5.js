@@ -1,5 +1,5 @@
-import {CORAL, balanco, foto, suave, texto} from './estilo';
-import {cola, fundo} from './pecas';
+import {CORAL, balanco, foto, marcador, recorte, suave, texto} from './estilo';
+import {cola, fundo, surge} from './pecas';
 
 // Lote D: cenas com fotos (raw dogging, luto e "e se", mãos ocupadas, banho e louça).
 
@@ -49,7 +49,19 @@ const banhoLouca = (ctx, t) => {
   cola(ctx, t, 2.6, 'light_bulb', 850, 360, 190);
 };
 
+// Cena 0. O nome da prática, numa tira de papel recortada, com o avião ao lado.
+const nome = (ctx, t) => {
+  fundo(ctx, t, 6);
+  surge(ctx, (t - 0.3) / 0.45, 540, 640, () => {
+    recorte(ctx, [[110, 540], [970, 548], [964, 744], [116, 736]], {cor: '#FFFDF6', borda: 8, seed: 3100, sombra: [8, 14, 18, 0.3]});
+    marcador(ctx, 190, 648, 700, 118, suave((t - 2.0) / 0.6), {seed: 3101});
+    texto(ctx, 'raw dogging', {y: 640, tam: 150, estilo: 'italic', p: (t - 0.8) / 0.9});
+  }, 440);
+  cola(ctx, t, 2.8, 'airplane', 860, 430, 230, {giro: -0.12});
+};
+
 export const CENAS5 = {
+  '00-nome': {f: nome, dur: 6, sons: [[0.3, 'pop'], [0.8, 'etiqueta', 0.8], [2.8, 'swoosh', 0.7]]},
   '01-raw-dogging': {f: rawDogging, dur: 10, sons: [[0.3, 'swoosh', 0.7], ...DISTRACOES.map((_, i) => [1.4 + i * 0.3, 'pop']), ...DISTRACOES.map((_, i) => [4.0 + i * 0.5, 'bip', 0.5])]},
   '18-e-se': {f: eSe, dur: 9, sons: [[0.3, 'swoosh', 0.7], [1.4, 'pop']]},
   '34-maos': {f: maos, dur: 8, sons: [[0.3, 'swoosh', 0.7], [1.5, 'pop']]},
