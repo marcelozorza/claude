@@ -60,7 +60,14 @@ const nome = (ctx, t) => {
   cola(ctx, t, 2.8, 'airplane', 860, 430, 230, {giro: -0.12});
 };
 
+// A logo do canal, jogada sobre o papel como uma foto, bem grande.
+const logo = (ctx, t) => {
+  fundo(ctx, t, 5);
+  foto(ctx, t, 0.3, 'logo-canal', 540, 640, 900, {giro: -0.04, de: Math.PI / 2 + 0.3, prop: 1});
+};
+
 export const CENAS5 = {
+  '00-logo': {f: logo, dur: 5, sons: [[0.3, 'swoosh', 0.8]]},
   '00-nome': {f: nome, dur: 6, sons: [[0.3, 'pop'], [0.8, 'etiqueta', 0.8], [2.8, 'swoosh', 0.7]]},
   '01-raw-dogging': {f: rawDogging, dur: 10, sons: [[0.3, 'swoosh', 0.7], ...DISTRACOES.map((_, i) => [1.4 + i * 0.3, 'pop']), ...DISTRACOES.map((_, i) => [4.0 + i * 0.5, 'bip', 0.5])]},
   '18-e-se': {f: eSe, dur: 9, sons: [[0.3, 'swoosh', 0.7], [1.4, 'pop']]},
