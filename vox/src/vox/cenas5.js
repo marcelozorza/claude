@@ -60,6 +60,24 @@ const nome = (ctx, t) => {
   cola(ctx, t, 2.8, 'airplane', 860, 430, 230, {giro: -0.12});
 };
 
+// Nome em duas linhas numa tira de papel, datilografado, com marca-texto em cada linha e um emoji ao lado.
+const nomeDuasLinhas = (linhas, emoji) => (ctx, t) => {
+  fundo(ctx, t, 7);
+  surge(ctx, (t - 0.3) / 0.45, 540, 640, () => {
+    recorte(ctx, [[90, 470], [990, 478], [984, 818], [96, 810]], {cor: '#FFFDF6', borda: 8, seed: 3200, sombra: [8, 14, 18, 0.3]});
+    ctx.save();
+    ctx.font = 'italic 130px "EB Garamond"';
+    linhas.forEach((l, i) => {
+      const y = 570 + i * 150;
+      const w = ctx.measureText(l).width;
+      marcador(ctx, 540 - w / 2 - 14, y + 8, w + 28, 104, suave((t - 2.4 - i * 0.35) / 0.6), {seed: 3201 + i});
+    });
+    ctx.restore();
+    linhas.forEach((l, i) => texto(ctx, l, {y: 570 + i * 150, tam: 130, estilo: 'italic', p: (t - 0.8 - i * 0.8) / 0.8}));
+  }, 450);
+  cola(ctx, t, 3.3, emoji, 880, 400, 230, {giro: 0.1});
+};
+
 // A logo do canal, jogada sobre o papel como uma foto, bem grande.
 const logo = (ctx, t) => {
   fundo(ctx, t, 5);
@@ -67,6 +85,8 @@ const logo = (ctx, t) => {
 };
 
 export const CENAS5 = {
+  '00-dmn-en': {f: nomeDuasLinhas(['Default Mode', 'Network'], 'brain'), dur: 7, sons: [[0.3, 'pop'], [0.8, 'etiqueta', 0.8], [1.6, 'etiqueta', 0.6], [3.3, 'pop']]},
+  '00-dmn-pt': {f: nomeDuasLinhas(['Rede de Modo', 'Padrão'], 'brain'), dur: 7, sons: [[0.3, 'pop'], [0.8, 'etiqueta', 0.8], [1.6, 'etiqueta', 0.6], [3.3, 'pop']]},
   '00-logo': {f: logo, dur: 5, sons: [[0.3, 'swoosh', 0.8]]},
   '00-nome': {f: nome, dur: 6, sons: [[0.3, 'pop'], [0.8, 'etiqueta', 0.8], [2.8, 'swoosh', 0.7]]},
   '01-raw-dogging': {f: rawDogging, dur: 10, sons: [[0.3, 'swoosh', 0.7], ...DISTRACOES.map((_, i) => [1.4 + i * 0.3, 'pop']), ...DISTRACOES.map((_, i) => [4.0 + i * 0.5, 'bip', 0.5])]},
