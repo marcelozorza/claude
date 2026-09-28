@@ -1,23 +1,7 @@
-import {CORAL, adesivo, balanco, camera, foto, papel, salta, suave, texto} from './estilo';
+import {CORAL, balanco, foto, suave, texto} from './estilo';
+import {cola, fundo} from './pecas';
 
 // Lote D: cenas com fotos (raw dogging, luto e "e se", mãos ocupadas, banho e louça).
-
-const surge = (ctx, k, cx, cy, desenha, raio = 150) => {
-  if (k <= 0) return;
-  const e = salta(k);
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(e, e);
-  ctx.rotate(balanco(cx, cy, raio));
-  ctx.translate(-cx, -cy);
-  desenha();
-  ctx.restore();
-};
-const cola = (ctx, t, t0, nome, x, y, tam, op = {}) => surge(ctx, (t - t0) / 0.45, x, y, () => adesivo(ctx, nome, x, y, tam, op), tam / 2);
-const fundo = (ctx, t, dur) => {
-  camera(ctx, t, {z: 1 + 0.03 * suave(t / dur), cy: 640});
-  papel(ctx);
-};
 
 // Cena 1. Raw dogging: o passageiro sem nada, e as distrações se apagando em volta.
 const DISTRACOES = [['mobile_phone', 190, 330], ['open_book', 890, 330], ['headphone', 190, 1010], ['droplet', 890, 1010]];

@@ -1,38 +1,23 @@
 import {ellipse, rng} from '../lib/util';
-import {AZUL, CORAL, TINTA, adesivo, balanco, camera, foto, marcador, papel, pincel, recorte, salta, seta, suave, texto} from './estilo';
+import {CORAL, TINTA, adesivo, foto, marcador, pincel, recorte, salta, seta, suave, texto} from './estilo';
+import {cola, fundo, surge} from './pecas';
 
 // Lote B: o estudo de Killingsworth e Gilbert (2010) e a linha do tempo.
 
-const surge = (ctx, k, cx, cy, desenha, raio = 150) => {
-  if (k <= 0) return;
-  const e = salta(k);
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(e, e);
-  ctx.rotate(balanco(cx, cy, raio));
-  ctx.translate(-cx, -cy);
-  desenha();
-  ctx.restore();
-};
-const cola = (ctx, t, t0, nome, x, y, tam, op = {}) => surge(ctx, (t - t0) / 0.45, x, y, () => adesivo(ctx, nome, x, y, tam, op), tam / 2);
-const fundo = (ctx, t, dur) => {
-  camera(ctx, t, {z: 1 + 0.03 * suave(t / dur), cy: 640});
-  papel(ctx);
-};
 const ESTUDO = 'Killingsworth e Gilbert, 2010 · Science';
 const etiqueta = (ctx, t, t0 = 0) => texto(ctx, ESTUDO, {y: 120, tam: 38, estilo: 'italic', etiqueta: '#FFFDF6', p: suave((t - t0) / 0.6) * 3});
 
 // Cena 20. Milênios de história humana e o celular só no finalzinho.
 const linhaTempo = (ctx, t) => {
   fundo(ctx, t, 10);
-  foto(ctx, t, 0.3, 'pintura-rupestre', 360, 440, 560, {giro: -0.05, de: Math.PI + 0.3});
-  const [x0, x1, y] = [90, 990, 860];
+  foto(ctx, t, 0.3, 'pintura-rupestre', 420, 470, 700, {giro: -0.05, de: Math.PI + 0.3});
+  const [x0, x1, y] = [90, 990, 930];
   pincel(ctx, [[x0, y], [(x0 + x1) / 2, y - 4], [x1, y]], {larg: 10, seed: 2000, seco: 0.3, ponta: 0.05, p: suave((t - 1.2) / 1.8)});
   pincel(ctx, [[x0, y - 26], [x0, y + 26]], {larg: 8, seed: 2001, p: suave((t - 1.2) / 0.3)});
-  texto(ctx, '300 mil anos', {x: x0, y: y + 70, tam: 46, fonte: 'Oswald', peso: '600', alinha: 'left', p: (t - 3.0) / 0.5});
+  texto(ctx, '300 mil anos', {x: x0, y: y + 80, tam: 58, fonte: 'Oswald', peso: '600', alinha: 'left', p: (t - 3.0) / 0.5});
   pincel(ctx, [[x1, y - 26], [x1, y + 26]], {larg: 8, cor: CORAL, seed: 2002, p: suave((t - 3.8) / 0.3)});
-  cola(ctx, t, 4.2, 'mobile_phone', x1 - 40, y - 130, 130, {giro: 0.1});
-  texto(ctx, '2007', {x: x1, y: y + 70, tam: 46, fonte: 'Oswald', peso: '600', cor: CORAL, alinha: 'right', p: (t - 4.6) / 0.3});
+  cola(ctx, t, 4.2, 'mobile_phone', x1 - 60, y - 150, 170, {giro: 0.1});
+  texto(ctx, '2007', {x: x1, y: y + 80, tam: 58, fonte: 'Oswald', peso: '600', cor: CORAL, alinha: 'right', p: (t - 4.6) / 0.3});
 };
 
 // Cena 23. As 2.250 pessoas do estudo, um ponto para cada uma.
@@ -59,8 +44,8 @@ const pontos = (ctx, t) => {
     if (k <= 0) continue;
     const c = i % COLS;
     const l = Math.floor(i / COLS);
-    const r = 6.5 * Math.min(1, salta(k));
-    ctx.fillStyle = TINTA;
+    const r = 5.5 * Math.min(1, salta(k));
+    ctx.fillStyle = '#4A4038';
     ctx.beginPath();
     ctx.arc(99 + c * 18, 250 + l * 18, r, 0, Math.PI * 2);
     ctx.fill();

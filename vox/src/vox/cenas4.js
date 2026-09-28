@@ -1,24 +1,8 @@
-import {adesivo, balanco, camera, foto, papel, pincel, salta, suave, texto} from './estilo';
+import {adesivo, foto, pincel, suave, texto} from './estilo';
+import {cola, fundo} from './pecas';
 import {cerebro} from './cerebro';
 
 // Lote C: Haaland, álcool/sexo/violência, monges, fera domada, Einstein e o violino, bicho acuado.
-
-const surge = (ctx, k, cx, cy, desenha, raio = 150) => {
-  if (k <= 0) return;
-  const e = salta(k);
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(e, e);
-  ctx.rotate(balanco(cx, cy, raio));
-  ctx.translate(-cx, -cy);
-  desenha();
-  ctx.restore();
-};
-const cola = (ctx, t, t0, nome, x, y, tam, op = {}) => surge(ctx, (t - t0) / 0.45, x, y, () => adesivo(ctx, nome, x, y, tam, op), tam / 2);
-const fundo = (ctx, t, dur) => {
-  camera(ctx, t, {z: 1 + 0.03 * suave(t / dur), cy: 640});
-  papel(ctx);
-};
 
 // Cena 3. A rota do voo: o avião cruza o mapa num arco tracejado.
 const rota = (ctx, t) => {
@@ -28,16 +12,16 @@ const rota = (ctx, t) => {
   const ponto = (u) => [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u - Math.sin(u * Math.PI) * 230];
   cola(ctx, t, 0.9, 'round_pushpin', a[0], a[1] - 40, 90);
   cola(ctx, t, 1.1, 'round_pushpin', b[0], b[1] - 40, 90);
-  const u = suave((t - 1.6) / 3.2);
+  const u = 0.82 * suave((t - 1.6) / 3.2);
   if (u > 0) {
     const n = Math.max(2, Math.floor(u * 30));
     for (let i = 0; i < n; i += 2) pincel(ctx, [ponto(i / 30), ponto(Math.min(u, (i + 1) / 30))], {larg: 6, seed: 3000 + i, seco: 0, ponta: 0.3});
     const [x, y] = ponto(u);
-    const [x2, y2] = ponto(Math.min(1, u + 0.01));
+    const [x0, y0] = ponto(Math.max(0, u - 0.02));
     ctx.save();
     ctx.translate(x, y);
     // O emoji do avião aponta para cima à direita (45°).
-    ctx.rotate(Math.atan2(y2 - y, x2 - x) + Math.PI / 4);
+    ctx.rotate(Math.atan2(y - y0, x - x0) + Math.PI / 4);
     ctx.translate(-x, -y);
     adesivo(ctx, 'airplane', x, y, 130, {fixo: true});
     ctx.restore();

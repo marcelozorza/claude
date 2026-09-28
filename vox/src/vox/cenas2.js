@@ -1,27 +1,9 @@
-import {CORAL, TINTA, adesivo, balanco, camera, foto, gira, papel, pincel, salta, seta, suave, texto} from './estilo';
+import {CORAL, TINTA, adesivo, foto, gira, papel, pincel, seta, suave, texto} from './estilo';
+import {carimba, cola, fundo, surge} from './pecas';
 import {REDE, cerebro} from './cerebro';
 
 // Cenas novas, no mesmo estilo e com as mesmas regras: só os dois terços de cima (até y = 1280),
 // sem títulos, só etiqueta de estudo, dados e texto citado.
-
-// Faz uma peça surgir com um pequeno salto de escala e balançar em torno de (cx, cy).
-const surge = (ctx, k, cx, cy, desenha, raio = 150) => {
-  if (k <= 0) return;
-  const e = salta(k);
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(e, e);
-  ctx.rotate(balanco(cx, cy, raio));
-  ctx.translate(-cx, -cy);
-  desenha();
-  ctx.restore();
-};
-// Adesivo que surge a partir do segundo t0.
-const cola = (ctx, t, t0, nome, x, y, tam, op = {}) => surge(ctx, (t - t0) / 0.45, x, y, () => adesivo(ctx, nome, x, y, tam, op), tam / 2);
-const fundo = (ctx, t, dur) => {
-  camera(ctx, t, {z: 1 + 0.03 * suave(t / dur), cy: 640});
-  papel(ctx);
-};
 
 // Cena 4. O "hack secreto": cadeado brilhando, com aspas irônicas.
 const hack = (ctx, t) => {
@@ -48,31 +30,8 @@ const telas = (ctx, t) => {
   foto(ctx, t, 0.2, 'celular-cama', 400, 400, 600, {giro: -0.06, de: Math.PI + 0.5});
   cerebro(ctx, {cx: 700, cy: 820, s: 440, p: suave((t - 1.0) / 0.5)});
   gira(ctx, 700, 820, 220, () => RACHAS.forEach((r, i) => pincel(ctx, r, {larg: 6, cor: TINTA, seed: 500 + i, seco: 0, ponta: 0.6, p: suave((t - 2.2 - i * 0.15) / 0.5)})));
-  // Carimbo "?": entra grande e bate no papel.
-  const k = (t - 4) / 0.25;
-  if (k > 0) {
-    const e = 1 + 0.8 * Math.max(0, 1 - k);
-    ctx.save();
-    ctx.translate(290, 1060);
-    ctx.rotate(-0.12 + balanco(290, 1060, 150));
-    ctx.scale(e, e);
-    ctx.globalAlpha = Math.min(1, k) * 0.9;
-    ctx.lineWidth = 12;
-    ctx.strokeStyle = CORAL;
-    ctx.beginPath();
-    ctx.arc(0, 0, 130, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.arc(0, 0, 108, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fillStyle = CORAL;
-    ctx.font = '600 170px "Oswald"';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('?', 0, 8);
-    ctx.restore();
-  }
+  // Carimbo de dúvida: o ponto de interrogação 3D bate no papel.
+  carimba(ctx, t, 4.0, 'red_question_mark', 270, 1040, 230, {giro: -0.14});
 };
 
 // Cena 7. A rede existe: as regiões acendem uma a uma e se ligam.
@@ -88,23 +47,23 @@ const redeExiste = (ctx, t) => {
     const [x0, y0] = P[a];
     const [x1, y1] = P[b];
     const meio = [(x0 + x1) / 2 + (y1 - y0) * 0.12, (y0 + y1) / 2 - (x1 - x0) * 0.12];
-    pincel(ctx, [[x0, y0], meio, [x1, y1]], {larg: 6, cor: CORAL, seed: 700 + i, seco: 0.2, p: suave((t - 4.2 - i * 0.25) / 0.6)});
+    pincel(ctx, [[x0, y0], meio, [x1, y1]], {larg: 10, cor: CORAL, seed: 700 + i, seco: 0.2, p: suave((t - 4.2 - i * 0.25) / 0.6)});
   }));
 };
 
 // Balão de pensamento com coisas surgindo dentro, e o cérebro embaixo à esquerda.
 const balao = (ctx, t) => {
   cerebro(ctx, {cx: 250, cy: 1080, s: 280, p: suave((t - 0.1) / 0.5)});
-  cola(ctx, t, 0.5, 'thought_balloon', 600, 560, 760);
+  cola(ctx, t, 0.5, 'thought_balloon', 600, 560, 820);
 };
 
 // Cena 9. Vantagem evolutiva: a mente antecipa o predador, a chuva, a comida.
 const vantagem = (ctx, t) => {
   fundo(ctx, t, 9);
   balao(ctx, t);
-  foto(ctx, t, 1.2, 'leao', 600, 540, 470, {giro: 0.05, de: -0.4, corte: [0.28, 0.2, 0.5, 0.75]});
-  cola(ctx, t, 2.0, 'cloud_with_rain', 860, 360, 160);
-  cola(ctx, t, 2.5, 'meat_on_bone', 400, 760, 150);
+  foto(ctx, t, 1.2, 'leao', 500, 540, 330, {giro: 0.05, de: -0.4, corte: [0.28, 0.2, 0.5, 0.75]});
+  cola(ctx, t, 2.0, 'cloud_with_rain', 775, 460, 140);
+  cola(ctx, t, 2.5, 'meat_on_bone', 765, 640, 130);
 };
 
 // Cena 10. Defeito evolutivo: a mesma máquina, agora girando em preocupações modernas.
@@ -176,22 +135,22 @@ const cenarios = (ctx, t) => {
 // Cena 15. Plantar, prever, resolver andando.
 const plantar = (ctx, t) => {
   fundo(ctx, t, 9);
-  foto(ctx, t, 0.3, 'maos-plantando', 330, 400, 500, {giro: -0.05, de: Math.PI + 0.4});
-  seta(ctx, [[610, 380], [680, 350], [740, 380]], {larg: 8, seed: 900, p: suave((t - 1.8) / 0.5)});
-  cola(ctx, t, 2.4, 'crystal_ball', 850, 440, 250);
-  seta(ctx, [[820, 620], [760, 740], [680, 800]], {larg: 8, seed: 901, p: suave((t - 3.7) / 0.5)});
-  cola(ctx, t, 4.3, 'person_walking', 500, 920, 300);
-  cola(ctx, t, 5.2, 'light_bulb', 620, 740, 140);
+  foto(ctx, t, 0.3, 'maos-plantando', 340, 400, 580, {giro: -0.05, de: Math.PI + 0.4});
+  seta(ctx, [[660, 360], [720, 330], [780, 365]], {larg: 9, seed: 900, p: suave((t - 1.8) / 0.5)});
+  cola(ctx, t, 2.4, 'crystal_ball', 880, 450, 290);
+  seta(ctx, [[870, 640], [855, 740], [790, 815], [690, 855]], {larg: 9, seed: 901, p: suave((t - 3.7) / 0.5)});
+  cola(ctx, t, 4.3, 'person_walking', 520, 960, 360);
+  cola(ctx, t, 5.2, 'light_bulb', 380, 740, 170);
 };
 
 // Cena 16. Bumerangue: o pensamento vai e volta, e vai de novo.
 const bumerangue = (ctx, t) => {
   fundo(ctx, t, 8);
-  const [bx, by] = [260, 780];
+  const [bx, by] = [220, 740];
   const volta = (u) => {
     // Elipse que sai do cérebro e volta para ele.
-    const a = Math.PI + 0.4 + u * Math.PI * 2;
-    return [620 + Math.cos(a) * 360, 620 - Math.sin(a) * 250];
+    const a = Math.PI + 0.9 + u * Math.PI * 2;
+    return [640 + Math.cos(a) * 380, 600 - Math.sin(a) * 330];
   };
   const lances = [[1.0, 3.6], [4.2, 6.8]];
   const ativo = lances.find(([a, b]) => t >= a && t <= b);
@@ -205,7 +164,7 @@ const bumerangue = (ctx, t) => {
     ctx.restore();
   }
   const chegou = lances.some(([, b]) => t > b && t < b + 0.3);
-  cerebro(ctx, {cx: bx, cy: by, s: 330 * (chegou ? 1.05 : 1), p: suave((t - 0.2) / 0.5)});
+  cerebro(ctx, {cx: bx, cy: by, s: 360 * (chegou ? 1.05 : 1), p: suave((t - 0.2) / 0.5)});
   const u = ativo ? suave((t - ativo[0]) / (ativo[1] - ativo[0])) : 0;
   const [x, y] = ativo ? volta(u) : volta(0);
   if (t > 0.6) {
@@ -213,7 +172,7 @@ const bumerangue = (ctx, t) => {
     ctx.translate(x, y);
     ctx.rotate(ativo ? t * 14 : 0.4);
     ctx.translate(-x, -y);
-    adesivo(ctx, 'boomerang', x, y, 150, {fixo: true});
+    adesivo(ctx, 'boomerang', x, y, 170, {fixo: true});
     ctx.restore();
   }
 };
