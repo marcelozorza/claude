@@ -89,6 +89,18 @@ t.duracao          # entrada + leitura + saída
   Despertador não é usado. Custo total da rodada: cerca de 780 créditos.
 - Pendente de aprovação: ritmo, tamanho das peças, zoom que cobre o gráfico em "66 dias", cores dos neurônios, corte seco do zoom.
 
+## Regra de preenchimento, trilha e sons (episódio de teste)
+- **Nunca deixar a tela vazia.** Faixa central (y 400 a 850) sempre com foto, infográfico ou gráfico. Faixa de cima (cy 240) com título que sintetiza a frase,
+  em texto livre com tempos próprios (`TituloAbs(texto, None, ts=[(ini, fim)...])`). Fotos 40 px abaixo dos títulos para não encostar.
+- Checagem automática: `python3 episodio-teste/montar_episodio.py --auditar` lista os trechos com a área de cima (y < 860) coberta em menos de 4,5%. Estado atual: nenhum.
+- Fotos de apoio geradas no Magnific (folha 2): cerebro, maquina (máquina de escrever, 1949), revista, cronometro, ponte, ampulheta, em `episodio-teste/fotos/`.
+  Custo da rodada: cerca de 640 créditos (soma com a anterior: cerca de 1.420).
+- Trilha e som de papel enviados pelo usuário em `episodio-teste/audio/` (`trilha.mp3`, `papel.mp3`). Conferir a licença de uso antes de publicar.
+- `mixar_audio.py`: voz limpa + trilha (30 dB abaixo, rebaixada 6 dB sob a fala) + som de papel em cada dobra. O som original tem 4 s. Usei só dois trechos curtos
+  (abertura 0,56 a 1,16 s, fechamento 1,20 a 1,75 s), como o usuário pediu. Cada peça de papel informa seus eventos por `sons()`.
+- **Começo falso removido:** "e cada repetição em graça" (113,3 a 114,8 s do áudio bruto) ficava antes da tomada boa. O corte agora está reproduzível em `cortar_audio.py`.
+  Áudio limpo: 72,7 s. Vídeo: 74,1 s. Os tempos de tudo vêm da transcrição, então refazer a transcrição se o áudio mudar.
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,

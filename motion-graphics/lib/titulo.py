@@ -105,7 +105,7 @@ class TiraDobravel(BolaPapel):
 
 
 class Titulo:
-    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0), credito=None):
+    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0), credito=None, ficar=0.9):
         self.palavras = texto.split(); self.entrada = entrada; self.cy = cy; self.rot = rot
         self.cor_marca = cor_marca; n = len(self.palavras)
         self.n_linhas = 1 if n <= 3 else 2
@@ -132,8 +132,8 @@ class Titulo:
             t0 = 0.85 if self.entrada == 'dobra' else (1.05 if self.entrada == 'desdobra' else 0.70); self.tempos = [(t0 + i / vel, t0 + (i + 0.92) / vel) for i in range(n)]
         else: self.tempos = tempos
         self.dur_entrada, self.dur_saida = {'dobra': (0.70, 0.60), 'desdobra': (1.0, 0.9)}.get(self.entrada, (0.55, 0.45)); self._folds = {}
-        self.t_fim = self.tempos[-1][1]
-        self.duracao = self.t_fim + 0.9 + self.dur_saida
+        self.t_fim = self.tempos[-1][1]; self.ficar = ficar
+        self.duracao = self.t_fim + ficar + self.dur_saida
 
     # ------------------------------------------------------------ a tira de papel rasgado
     def _faixa(self):
@@ -238,7 +238,7 @@ class Titulo:
     def quadro(self, t, canvas=CANVAS):
         W, H = canvas
         tl = t - self.dur_entrada                        # tempo de leitura (0 quando a entrada termina)
-        sair = t - (self.t_fim + 0.9)
+        sair = t - (self.t_fim + self.ficar)
         im = self._conteudo(t)
         # --- entrada e saída
         if t < self.dur_entrada: p = t / self.dur_entrada; saindo = False
