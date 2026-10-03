@@ -118,7 +118,7 @@ class BolaPapel:
         self._cache = {}
 
     # ---------------------------------------------------------------- desenho de uma pilha
-    def _desenha(self, pilha, apaga_foto=0.0):
+    def _desenha(self, pilha, apaga_foto=0.0, vinco=1.0):
         H, W = self.H, self.W
         out = np.zeros((H, W, 4), np.float32)
         D = np.zeros((H, W), np.float32)          # sombra já aplicada (não acumula entre dezenas de pedaços)
@@ -152,13 +152,13 @@ class BolaPapel:
                 sh = ndi.gaussian_filter(m, 4.0)
                 sh = np.roll(np.roll(sh, 4, 0), 3, 1)
                 Dr = D[y0:y1, x0:x1]
-                s_ = 0.26 * sh * reg[..., 3] * (1 - a)
+                s_ = 0.26 * vinco * sh * reg[..., 3] * (1 - a)
                 nd = np.maximum(Dr, s_)
                 reg[..., :3] *= ((1 - nd) / (1 - Dr))[..., None]
                 D[y0:y1, x0:x1] = nd
             # contorno (vinco) do pedaço
             borda = m - ndi.grey_erosion(m, size=(3, 3))
-            rgb = rgb * (1 - 0.14 * np.clip(borda * 2, 0, 1))[..., None]
+            rgb = rgb * (1 - 0.14 * vinco * np.clip(borda * 2, 0, 1))[..., None]
             ra = reg[..., 3:4]
             reg[..., :3] = reg[..., :3] * (1 - a[..., None]) + rgb * a[..., None]
             reg[..., 3:4] = ra + a[..., None] * (1 - ra)

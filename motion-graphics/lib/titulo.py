@@ -87,7 +87,10 @@ class TiraDobravel(BolaPapel):
         if c >= 1.0: out = self._desenha(self.estados[self.N])
         else:
             pe = p * p * (3 - 2 * p); n, d = self.dobras[i]
-            out = self._desenha(_dobra(self.estados[i], n, d, ang=math.pi * pe))
+            ang = math.pi * pe
+            # perto de planificar, o vinco da primeira dobra some (senão fica uma linha escura no meio da tira)
+            vinco = 1.0 if i > 0 else float(np.clip(ang / 1.2, 0, 1) ** 2 * (3 - 2 * np.clip(ang / 1.2, 0, 1)))
+            out = self._desenha(_dobra(self.estados[i], n, d, ang=ang), vinco=vinco)
         out = self._organico(out, c, 2.0)
         k = c ** 1.2
         sh = 1 + k * (0.030 * np.clip(self.F, -1.5, 1.5) - 0.055 * self.B)
