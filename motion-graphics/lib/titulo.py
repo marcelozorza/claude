@@ -282,7 +282,7 @@ class Titulo:
             rot = self.rot - 6 * desl
         elif self.entrada == 'rasgo':
             pass
-        from animfoto import sombra_papel
+        from animfoto import sombra_papel, balanco
         if self.entrada == 'rasgo' and p < 1.0:
             # a tira é revelada por uma borda rasgada que avança da esquerda para a direita
             w, h = im.size; r = np.random.RandomState(self.seed + 9)
@@ -293,7 +293,7 @@ class Titulo:
             mask = np.clip(lim - xs, 0, 1) if not saindo else np.clip(lim - xs, 0, 1)
             a = np.array(im.getchannel('A')).astype(np.float32) / 255 * mask
             im = im.copy(); im.putalpha(Image.fromarray((a * 255).astype(np.uint8)))
-        rot += 1.3 * math.sin(2 * math.pi * t / 2.9 + self.seed) + 0.5 * math.sin(2 * math.pi * t / 1.7 + 1.0)
+        rot += balanco(t, self.seed, 1.0)
         if sc != 1.0: im = im.resize((max(1, int(im.width * sc)), max(1, int(im.height * sc))), Image.LANCZOS)
         if abs(rot) > 0.02: im = im.rotate(rot, resample=Image.BICUBIC, expand=True)
         im2 = sombra_papel(im, off=int(10 * sombra_k), blur=int(9 * sombra_k) + 1, op=0.30 * sombra_k + 0.05)

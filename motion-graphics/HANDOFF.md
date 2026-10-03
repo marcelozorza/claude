@@ -22,6 +22,7 @@ Ele monta tudo manualmente. Não montar o vídeo inteiro nem entregar apresentad
 | Bola de papel (entrada e saída de fotos) | aprovada | `lib/bola.py`, `lib/animfoto.py`, `lib/papel.py`, `demos/demo_bola.py` |
 | Chroma key e cor do apresentador | aprovado | `lib/chroma.py` |
 | Título na tela (tira de papel rasgado) | **aprovado** (entrada `'dobra'`, ritmo e linha do vinco corrigidos) | `lib/titulo.py`, `demos/demo_titulo.py`, `fonts/EBGaramond-Italic.ttf` |
+| Balanço de poucos graus nos recortes | **feito, aguardando aprovação** | `balanco()` e `estado(..., fase=)` em `lib/animfoto.py`, `demos/demo_balanco.py` |
 | Recortes prontos (18 figuras + logo) | prontos | `assets/recortes/` |
 | Montagem completa do vídeo (referência) | rascunho | `montagem/montar.py`, `montagem/cortes_e_momentos.txt` |
 
@@ -49,12 +50,24 @@ t.duracao          # entrada + leitura + saída
 - Outras entradas ainda no código, descartadas: `'desdobra'` (sanfona 2D), `'lateral'`, `'z'`, `'rasgo'`.
 - Rodar o teste: `python3 demos/demo_titulo.py` (gera `demos/saida/titulo_dobra.mp4` em 540x960, exige ffmpeg e leva alguns minutos).
 
+## Balanço nos recortes (`lib/animfoto.py`)
+- `balanco(t, fase, fase2)` devolve graus. É a mesma fórmula do título (duas senoides, períodos 2,9 s e 1,7 s, cerca de 2 graus).
+  O título agora chama `balanco(t, self.seed, 1.0)`, sem mudança visual.
+- `estado(item, u, hold, ..., fase=0.0)` soma o balanço à rotação em todas as etapas (entrada, parada, saída, sumiço da bola).
+  Recortes que ficam juntos na tela devem receber fases diferentes.
+- `montagem/montar.py`: `Recorte` deriva a fase da posição (`cx`, `cy`). O cartão e a etiqueta de `Estudo` também balançam.
+  O `Logo` ficou de fora porque `logo_card.png` ocupa a tela inteira (1080x1920, sem transparência) e girar mostraria as bordas.
+- Mantido sem mudança: a pulsação de escala de 0,8% na parada do recorte (`sc = 1.0 + 0.008 * sin(u * 3)`). Perguntar se deve sair.
+- Teste: `python3 demos/demo_balanco.py` (três recortes simultâneos, gera `demos/saida/balanco.mp4`, cerca de 50 s).
+- `demos/demo_bola.py` continua quebrado fora da pasta original (importa `montar` e lê `cut/`).
+
 ## Próximo passo
-O título está aprovado. Perguntar ao usuário qual é a próxima peça. Candidatas já mencionadas por ele:
-1. Aplicar o mesmo balanço de poucos graus aos recortes e cartões da bola de papel (`lib/animfoto.py`), para tudo ter a mesma sensação.
-2. Títulos reais: usar os tempos das palavras da transcrição no marca-texto e, se necessário, alargar a tira para cerca de 1020 px
+Mostrar `demos/saida/balanco.mp4` ao usuário e pedir aprovação do balanço nos recortes (amplitude e se a pulsação de escala sai).
+Depois, as candidatas restantes:
+1. Títulos reais: usar os tempos das palavras da transcrição no marca-texto e, se necessário, alargar a tira para cerca de 1020 px
    em títulos de 10 palavras (`largura_max`, ganha uns 10% de fonte). O tamanho do quadradinho final é o parâmetro `alvo` em `TiraDobravel.__init__`.
-3. Recomposição sobre o corte final dele no CapCut, renderização em alta e entrega.
+   Exige a transcrição com tempos por palavra.
+2. Recomposição sobre o corte final dele no CapCut, renderização em alta e entrega. Exige o arquivo do corte.
    Arquivos acima de 30 MiB sobem pelo fluxo `request_upload` + PUT + `finalize_upload` do Magnific.
 Registrar aqui, ao fim de cada peça aprovada, o estado novo e o próximo passo.
 

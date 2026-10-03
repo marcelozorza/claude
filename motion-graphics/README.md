@@ -23,6 +23,8 @@ b.quadro(0.6)    # dobras
 b.quadro(1.0)    # bola fechada
 ```
 `estado()` já cuida da sequência inteira: entrada (0,5 s), parada, saída (0,5 s) e o sumiço da bola.
+O recorte balança cerca de 2 graus no próprio eixo o tempo todo (`balanco()`, o mesmo do título). Use `fase=` diferente
+para recortes que ficam juntos na tela.
 
 ## Título na tela
 Frase em tira de papel rasgado, EB Garamond itálico, com marca-texto passando conforme a fala. Entra e sai como um quadradinho

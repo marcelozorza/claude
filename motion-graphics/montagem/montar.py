@@ -7,7 +7,7 @@ A = os.path.dirname(os.path.abspath(__file__)) + '/'
 sys.path.insert(0, A + 'lib')
 from chroma import key_rgb, grade
 from papel import recorte_jornal
-from animfoto import estado, sombra_papel, back, ease_out
+from animfoto import estado, sombra_papel, back, ease_out, balanco
 import math
 FF = os.path.expanduser('~/bin/ffmpeg')
 W, H, FPS = 1080, 1920, 30
@@ -151,10 +151,11 @@ class Recorte:
         im.thumbnail((h * 3, h)); self.img = recorte_jornal(im, seed=int(abs(hash(str(src)[:40])) % 97))
         self.t0 = a0 + atraso; self.t1 = a1; self.cx, self.cy, self.rot = cx, cy, rot
         self.hold = max(0.35, self.t1 - self.t0 - 0.5)
+        self.fase = (cx * 0.013 + cy * 0.007) % (2 * math.pi)          # recortes simultâneos balançam fora de sincronia
     def item_at(self, t): return self.img
     def pos_pos(self, im, t): return im
     def draw(self, fr, t):
-        im = estado(self.item_at(t), t - self.t0, self.hold, rot=self.rot, modo=self.modo)
+        im = estado(self.item_at(t), t - self.t0, self.hold, rot=self.rot, modo=self.modo, fase=self.fase)
         if im is None: return
         im = self.pos_pos(im, t)
         im2 = sombra_papel(im)
@@ -235,9 +236,10 @@ class Estudo:
     def draw(self, fr, t):
         s = self._pop(t, self.t0, self.t1)
         if s is None: return
-        c = self.card.resize((int(self.card.width * s), int(self.card.height * s)), Image.BILINEAR).rotate(self.rot, resample=Image.BICUBIC, expand=True)
+        u = t - self.t0
+        c = self.card.resize((int(self.card.width * s), int(self.card.height * s)), Image.BILINEAR).rotate(self.rot + balanco(u, 0.8, 2.4), resample=Image.BICUBIC, expand=True)
         fr.alpha_composite(c, (int(W / 2 - c.width / 2), int(self.cy - c.height / 2)))
-        l = self.lab.resize((int(self.lab.width * s), int(self.lab.height * s)), Image.BILINEAR)
+        l = self.lab.resize((int(self.lab.width * s), int(self.lab.height * s)), Image.BILINEAR).rotate(balanco(u, 4.6, 0.3), resample=Image.BICUBIC, expand=True)
         fr.alpha_composite(l, (int(W / 2 - l.width / 2), int(115 - l.height / 2)))
 
 
