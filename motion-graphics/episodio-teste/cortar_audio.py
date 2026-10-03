@@ -23,6 +23,7 @@ def ok(a, b):
     if b - a < 0.5 or b < 4.5: return False
     if 33.0 < a < 39.0: return False          # primeira tomada de "Na centésima" (refeita em 39,8)
     if 44.9 < a < 69.7: return False          # citação: tentativas erradas e "vou gravar tudo de novo"
+    if 69.6 < a < 78.5: return False          # parte da Carla Shatz e da citação falada: cortada a pedido (a ideia já veio antes)
     if 113.4 < a < 115.9: return False        # começo falso de "e cada repetição em graça" (refeito em 116,2)
     return True
 seg = [r for r in m if ok(*r)]; mm = [seg[0]]

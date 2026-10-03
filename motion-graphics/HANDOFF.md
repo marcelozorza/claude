@@ -112,6 +112,17 @@ t.duracao          # entrada + leitura + saída
 - `montar_episodio.py` gera também `saida/episodio_preview_x1.10.mp4`, 10% mais rápido (`setpts` e `atempo`), com 67,4 s.
 - Custo desta rodada no Magnific: cerca de 260 créditos (duas imagens do caminho e a ampliação). Total do episódio: cerca de 1.680.
 
+## Enxugamento do episódio de teste (excesso de elementos)
+- **Saíram:** títulos "Tudo no automático", "Uma explicação no cérebro...", "Donald Hebb, 1949", "Disparar junto...", "Um dispara, outro responde", "Quanto mais repete...",
+  a parte inteira da Carla Shatz (áudio também, em `cortar_audio.py`: 69,6 a 78,5 s do bruto), a revista, o livro, a máquina de escrever, a imagem da ponte e a frase final "Cada repetição engrossa a ponte" (a fala continua).
+- **Citação fixa no alto** ("Neurônios que disparam juntos ficam ligados", sem crédito) de "uma ideia simples" até o fim do infográfico. O marca-texto avança com a animação
+  (neurônio cai, disparos, "dois neurônios", cordão). Usa `TituloAbs(..., entra=...)` para entrar antes do primeiro tempo de marca-texto.
+- **"21 dias" sozinho** com X, sem livro. **"Cérebro em construção" e a ampulheta ficam até o último quadro** (`ficar=60`, `hold=100`).
+- O cérebro fica na tela de 6,1 s até o primeiro neurônio cair, para o centro não ficar vazio sem a máquina de escrever.
+- Zooms de 30%: "cabe em uma frase", "É assim que um hábito se forma", "mediana, 66 dias" e a última frase (o zoom da citação saiu junto com a citação falada).
+- **Legendas:** o usuário vai legendar tudo por conta própria, embaixo. Não adicionar legenda nas peças.
+- Vídeo: 65,3 s (59,4 s a 10% mais rápido). Tudo é derivado da transcrição, sem tempos fixos depois dos 14 s, exceto o cérebro e o despertador.
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,
