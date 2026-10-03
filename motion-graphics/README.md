@@ -24,6 +24,16 @@ b.quadro(1.0)    # bola fechada
 ```
 `estado()` já cuida da sequência inteira: entrada (0,5 s), parada, saída (0,5 s) e o sumiço da bola.
 
+## Título na tela (em revisão)
+Frase em tira de papel rasgado, EB Garamond itálico, com marca-texto passando conforme a fala. Entra e sai como um quadradinho
+que se desdobra com as dobras reais da bola de papel. Detalhes e pendências em `HANDOFF.md`.
+
+```python
+from titulo import Titulo
+t = Titulo('Lorem ipsum dolor', entrada='dobra')
+t.quadro(segundos)   # RGBA 1080x1920
+```
+
 ## Chroma key e cor do apresentador (`lib/chroma.py`)
 - `key_rgb(frame)`: remove o verde por dominância (`g - max(r, b)`) e faz despill.
 - `grade(frame, temp, matiz, sat)`: correção de cor do apresentador. O tom aprovado foi `0.26, 0.26, 0.26`.
