@@ -301,7 +301,7 @@ def montar():
     t_cam = t_fold + 0.3; t_cron = ini('quanto') - 0.25                                  # caminho depois dos neurônios, cronômetro em "quanto tempo"
     art = [  # (nome, t0, hold, cx, cy, h, rot, fase)
         ('escova', -0.35, 1.45, 270, 450, 440, -6, 0.0), ('cafe', ini('café') - 0.35, 0.9, 780, 420, 340, 4, 2.1), ('celular', ini('celular') - 0.35, 1.1, 400, 650, 600, -3, 4.2),
-        ('despertador', 4.0, 1.5, 780, 600, 380, 5, 1.1), ('cerebro', 6.1, 7.0, 540, 580, 430, -3, 3.0),     # fica até o primeiro neurônio cair (sem a máquina de escrever)
+        ('despertador', 4.0, 1.5, 780, 600, 380, 5, 1.1), ('cerebro', 6.1, 2.0, 540, 580, 430, -3, 3.0),     # a máquina de escrever saiu e nada entra no lugar (pedido do usuário)
         
         ('caminho', t_cam, t_cron - t_cam - 1.0, 540, 600, 400, -2, 1.8), ('cronometro', t_cron, 1.1, 540, 580, 430, -3, 3.7)]
     cena = [Foto(a[0], a[1], a[2], a[3], a[4] + 40, *a[5:]) for a in art]     # fotos 40 px mais baixas: não encostam nos títulos
@@ -317,9 +317,7 @@ def montar():
     tc = neu.t_cai[0]
     q_ts = [(tc, tc + 0.7), (tc + 0.7, ini('disparar')), (ini('disparar'), ini('muitas') + 0.9), (ini('pense'), ini('dispara') + 0.5), (neu.t_fio, neu.t_fio + 0.4), (neu.t_fio + 0.4, neu.t_fio + 1.2)]
     cena += [
-        TituloAbs('“Neurônios que disparam juntos ficam ligados”', None, cy=240, ts=q_ts, entra=ini('ideia') - 0.75, ficar=t_fold - q_ts[-1][1]),
-        T('Mesma rotina', [(ini('mesma'), fim('sequência')), (fim('sequência'), fim('repetida'))], 0.0),
-        TituloAbs('Um caminho pronto', idx('caminho') - 1, idx('pronto'), cy=240, ficar=0.4),
+        TituloAbs('“Neurônios que disparam juntos ficam ligados”', None, cy=240, ts=q_ts, entra=ini('hebb'), ficar=t_fold - q_ts[-1][1]),
         TituloAbs('21 dias', None, cy=380, ts=[pal('21')[1:], pal('dias')[1:]], x_abs=(t_21x, t_21x + 0.75), teto1=240, ficar=t_limpa - fim('dias')),
         T('Londres: 96 pessoas', [pal('londres')[1:], pal('96')[1:], pal('pessoas')[1:]], 0.0),
         TituloAbs('66 dias', None, cy=400, ts=[pal('66')[1:], pal('dias', 1)[1:]], teto1=240, ficar=0.0),

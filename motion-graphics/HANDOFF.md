@@ -123,6 +123,11 @@ t.duracao          # entrada + leitura + saída
 - **Legendas:** o usuário vai legendar tudo por conta própria, embaixo. Não adicionar legenda nas peças.
 - Vídeo: 65,3 s (59,4 s a 10% mais rápido). Tudo é derivado da transcrição, sem tempos fixos depois dos 14 s, exceto o cérebro e o despertador.
 
+## Ajustes finais pedidos (citação, trilha e máquina de escrever)
+- Saíram os títulos "Mesma rotina" e "Um caminho pronto". O diorama de pegadas fica sozinho de 31,9 a 37,1 s.
+- A máquina de escrever saiu **sem nada no lugar**. O cérebro voltou a sair em 9,1 s e a tela fica sem peça de 9,1 a 11,9 s, a pedido (a regra "nunca vazio" não vale aqui).
+- A citação começa a entrar quando ele fala "Hebb" (`entra=ini('hebb')`, 11,9 s).
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,
