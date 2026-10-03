@@ -61,6 +61,14 @@ t.duracao          # entrada + leitura + saída
 - Teste: `python3 demos/demo_balanco.py` (três recortes simultâneos, gera `demos/saida/balanco.mp4`, cerca de 50 s).
 - `demos/demo_bola.py` continua quebrado fora da pasta original (importa `montar` e lê `cut/`).
 
+## Apresentador no episódio de teste
+- Recorte: `episodio-teste/saida/apresentador_recorte.png` (chroma + grade 0,26). Origem: print do vídeo dele em chroma.
+- **Tamanho zero (medido sobre o print que ele mandou):** o recorte é escalado a 0,927 do tamanho nativo (largura 839 px no canvas 1080x1920),
+  centralizado, topo do cabelo em y = 898 (cerca de 47% da altura), cortado pelo rodapé. A cabeça tem cerca de 266 px de largura.
+- **Tamanho grande:** zero x 1,3, com o rodapé fixo (topo do cabelo em y = 592). A âncora do zoom foi suposta (rodapé), ele não confirmou.
+- Cada frase muda de tamanho (zero para grande e volta), para dar ênfase e quebrar o ritmo. Ele pode ficar na frente do infográfico.
+- Quadros de conferência: `episodio-teste/saida/quadro_zero.png` e `quadro_grande.png`.
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,
