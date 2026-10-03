@@ -101,6 +101,17 @@ t.duracao          # entrada + leitura + saída
 - **Começo falso removido:** "e cada repetição em graça" (113,3 a 114,8 s do áudio bruto) ficava antes da tomada boa. O corte agora está reproduzível em `cortar_audio.py`.
   Áudio limpo: 72,7 s. Vídeo: 74,1 s. Os tempos de tudo vêm da transcrição, então refazer a transcrição se o áudio mudar.
 
+## Revisão após o feedback do episódio de teste
+- **Seção do gráfico refeita** (47 a 67 s): "21 dias" grande (tira de papel, `teto1=240`) recebe X vermelho, entra o livro velho e recebe X (`FotoX`, `lib/marcador.py`).
+  A folha é limpa (tira e livro dobram juntos) e entram a prancheta e "66 dias" grande. Depois uma única barra limpa (`BarraSolo`, sem papel de jornal, amarela com contorno de tinta)
+  parte de 66, encurta para 18, cresce até 254, passa do topo e sai da tela. O usuário falou "21" no encurtamento, mas a fala diz 18, então usei 18.
+- **Som de papel só nos títulos** (tiras), 6 dB abaixo do anterior (pico de -16 dBFS). Fotos, neurônios e barra não fazem som.
+- **Cena de café e celular repetida removida.** No lugar entrou `fotos/caminho.png` (diorama de trilha com pegadas) de 40,3 a 45,3 s.
+- **Defeito corrigido:** `pal('cérebro')` pegava a primeira ocorrência e um título ficava preso na tela de 6 s até o fim. Para palavras repetidas usar o índice da ocorrência.
+- Auditorias: `--auditar` (vazios) e `--sobrepor` (peças que se cobrem). Ao fim restam só transições curtas e a barra pequena de 18 dias (64,2 a 65,4 s).
+- `montar_episodio.py` gera também `saida/episodio_preview_x1.10.mp4`, 10% mais rápido (`setpts` e `atempo`), com 67,4 s.
+- Custo desta rodada no Magnific: cerca de 260 créditos (duas imagens do caminho e a ampliação). Total do episódio: cerca de 1.680.
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,

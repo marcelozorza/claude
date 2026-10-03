@@ -12,6 +12,7 @@ from fundo import fundo
 from papel import recorte_jornal
 from animfoto import estado, sombra_papel, balanco, ease_io, _bola
 from titulo import Titulo, _borda, _fonte
+from marcador import riscar_x
 
 W, H = 1080, 1920; FPS = 30
 FF = shutil.which('ffmpeg') or os.path.expanduser('~/bin/ffmpeg')
@@ -89,17 +90,31 @@ class Foto:
     def __init__(self, nome, t0, hold, cx, cy, h, rot, fase, jornal=True):
         im = (nome.copy() if isinstance(nome, Image.Image) else Image.open(os.path.join(AQUI, 'fotos', nome + '.png')).convert('RGBA')); im.thumbnail((h * 3, h))
         self.item = recorte_jornal(im, seed=7) if jornal else im
-        self.t0, self.hold, self.cx, self.cy, self.rot, self.fase = t0, hold, cx, cy, rot, fase
+        self.t0, self.hold, self.cx, self.cy, self.rot, self.fase = t0, hold, cx, cy, rot, fase; self.nome = nome if isinstance(nome, str) else 'imagem'
     def draw(self, fr, t):
         im = estado(self.item, t - self.t0, self.hold, rot=self.rot, fase=self.fase)
         if im is not None: compor(fr, im, self.cx, self.cy)
     def sons(self): return [(self.t0, 'abre'), (self.t0 + 0.5 + self.hold, 'fecha')]
 
+class FotoX(Foto):
+    """foto com um X de marca-texto vermelho que é riscado em tx = (inicio, fim) e acompanha a dobra de saída"""
+    def __init__(self, *a, tx=(0, 0), **k):
+        super().__init__(*a, **k); self.tx = tx; self.cache = {}
+    def _item(self, t):
+        if t < self.tx[0]: return self.item
+        p = 1.0 if t > self.t0 + 0.5 + self.hold else clamp((t - self.tx[0]) / (self.tx[1] - self.tx[0])); k = round(p, 2)
+        if k not in self.cache: self.cache[k] = riscar_x(self.item, k, margem=0.10)
+        return self.cache[k]
+    def draw(self, fr, t):
+        im = estado(self._item(t), t - self.t0, self.hold, rot=self.rot, fase=self.fase)
+        if im is not None: compor(fr, im, self.cx, self.cy)
+
 class TituloAbs:
     """título cujas palavras seguem o tempo da fala. a, b = índices da primeira e da última palavra na transcrição,
     ou, com a=None, ts = lista de (inicio, fim) por palavra do texto (texto livre que sintetiza a frase)"""
-    def __init__(self, texto, a, b=None, cy=270, ts=None, **kw):
-        ts = ts or tempos(a, b); self.t0 = ts[0][0] - 0.85
+    def __init__(self, texto, a, b=None, cy=270, ts=None, x_abs=None, **kw):
+        ts = ts or tempos(a, b); self.t0 = ts[0][0] - 0.85; self.nome = 'título ' + texto[:22]
+        if x_abs: kw['x_tempos'] = (x_abs[0] - self.t0, x_abs[1] - self.t0)
         self.t = Titulo(texto, tempos=[(x - self.t0, y - self.t0) for x, y in ts], entrada='dobra', cy=cy, **kw)
     def draw(self, fr, t):
         u = t - self.t0
@@ -110,7 +125,7 @@ class Neuronios:
     """dois neurônios de papel caem na mesa. Um cordão liga os dois, engrossa a cada disparo e acaba arrastando um para perto do outro"""
     R = 92
     def __init__(self, cy=620):
-        self.cy = cy; self.sp = [self._neuronio((226, 122, 92), 4), self._neuronio((86, 150, 176), 9)]
+        self.cy = cy; self.nome = 'neurônios'; self.sp = [self._neuronio((226, 122, 92), 4), self._neuronio((86, 150, 176), 9)]
         self.t_cai = (ini('neurônio') - 0.45, ini('outro') - 0.25)
         self.t_fio = ini('primeira') - 0.4; self.t_x = ini('décima'); self.t_y = ini('centésima'); self.t_z = ini('engrossou') - 0.9
         self.t_fold = fim('engrossou') + 0.25
@@ -228,62 +243,45 @@ class Neuronios:
         else:
             bola_saida(fr, self.final(), t, self.t_fold, 0.55, W / 2, self.cy)
 
-class Grafico:
-    """barras de papel que caem sobre a mesa. O mito dos 21 dias é riscado de vermelho"""
-    BASE = 740; ESC = 2.4
-    def __init__(self, cy=520):
-        self.cy = cy
-        self.barras = [  # (dias, x, tempo da queda, cor, legenda)
-            (21, 215, ini('21') - 0.25, (232, 228, 218), 'mito'),
-            (18, 435, ini('18') - 0.3, (214, 170, 120), 'mais rápido'),
-            (66, 655, ini('66') - 0.3, (214, 170, 120), 'mediana'),
-            (254, 875, ini('254') - 0.3, (214, 170, 120), 'mais lento')]
-        self.sp = [faixa_papel(172, max(38, d * self.ESC), cor, 40 + i, amp=4) for i, (d, x, tq, cor, lg) in enumerate(self.barras)]
-        self.t_x = ini('livro') + 0.05; self.t_mt = ini('66') + 0.05; self.t_fold = fim('254') + 0.35; self._final = None
-        self.f_val = fonte_it(54, 560); self.f_leg = fonte_it(42, 480)
-
-    def sons(self): return [(self.t_fold, 'fecha')]
-
-    def _x_vermelho(self, L, bx, by_top, bh, p):
-        d = ImageDraw.Draw(L); S = 1
-        for k, ((x0, y0), (x1, y1)) in enumerate([((bx - 78, by_top - 72), (bx + 78, by_top + bh + 6)), ((bx + 78, by_top - 72), (bx - 78, by_top + bh + 6))]):
-            pr = clamp(p * 2 - k)
-            if pr <= 0: continue
-            n = 24
-            for i in range(int(n * pr)):
-                u0, u1 = i / n, (i + 1) / n; wob = lambda u: 4 * math.sin(u * 7 + k * 2)
-                d.line([(x0 + (x1 - x0) * u0 + wob(u0), y0 + (y1 - y0) * u0), (x0 + (x1 - x0) * u1 + wob(u1), y0 + (y1 - y0) * u1)], fill=(232, 36, 40, 215), width=15)
-
-    def camada(self, t, final=False):
-        L = Image.new('RGBA', (W, 900), (0, 0, 0, 0)); vis = False
-        for i, (d, x, tq, cor, lg) in enumerate(self.barras):
-            u = t - tq
-            if u < 0: continue
-            vis = True; sp = self.sp[i]; h = max(38, d * self.ESC)
-            if u < 0.32: dy = -1100 * (1 - (u / 0.32) ** 2)
-            elif u < 0.46: dy = -16 * math.sin(math.pi * (u - 0.32) / 0.14)
-            else: dy = 0
-            compor(L, sp, x, self.BASE - h / 2 + dy, rot=balanco(t, 1.3 * i + 0.4, 2.1) * 0.5, off=8, blur=8, op=0.30)
-            if u > 0.46:                                                # número e legenda aparecem quando a barra assenta
-                dr = ImageDraw.Draw(L); top = self.BASE - h + 4
-                txt = f'{d} dias'; tw = dr.textlength(txt, font=self.f_val)
-                if i == 2 and t > self.t_mt:                           # marca-texto na mediana
-                    pm = ease_io(clamp((t - self.t_mt) / 0.7)); lay = Image.new('RGBA', (W, 900), (0, 0, 0, 0))
-                    ImageDraw.Draw(lay).rectangle([x - tw / 2 - 8, top - 62, x - tw / 2 - 8 + (tw + 16) * pm, top - 8], fill=(255, 226, 0, 170)); L.alpha_composite(lay)
-                dr.text((x - tw / 2, top - 62), txt, font=self.f_val, fill=TINTA)
-                lw = dr.textlength(lg, font=self.f_leg); dr.text((x - lw / 2, self.BASE + 28), lg, font=self.f_leg, fill=(96, 84, 70, 255))
-                if i == 0 and t > self.t_x: self._x_vermelho(L, x, self.BASE - h, h, ease_io(clamp((t - self.t_x) / 0.7)))
-        return L if vis else None
-
+class BarraSolo:
+    """gráfico limpo (sem papel de jornal): uma única barra amarela de 66 dias que encurta para 18, sobe até 254 e sai da tela"""
+    BASE = 820; PX = 5.0; LARG = 230
+    def __init__(self, t_in, t_18, t_254, t_sobe):
+        self.t_in, self.t_18, self.t_254, self.t_sobe = t_in, t_18, t_254, t_sobe; self.nome = 'barra'
+        self.f_num = fonte_it(190, 640); self.f_dias = fonte_it(78, 520); self.f_leg = fonte_it(54, 480); self._barras = {}
+    def valor(self, t):
+        if t < self.t_in: return 0.0
+        if t < self.t_in + 0.45: u = (t - self.t_in) / 0.45; return 66 * (1 + 1.7 * (u - 1) ** 3 + 0.7 * (u - 1) ** 2)       # sobe com um leve repique
+        if t < self.t_18: return 66.0
+        if t < self.t_18 + 0.45: return 66 + (18 - 66) * ease_io((t - self.t_18) / 0.45)
+        if t < self.t_254: return 18.0
+        u = clamp((t - self.t_254) / 1.25); return 18 + (254 - 18) * u ** 2.2
+    def _barra(self, altura):
+        h = max(8, min(int(altura), self.BASE + 40)); k = h
+        if k not in self._barras:
+            S = 2; im = Image.new('RGBA', (self.LARG * S, h * S), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+            d.rounded_rectangle([0, 0, self.LARG * S - 1, h * S + 40], radius=14 * S, fill=(36, 30, 26, 255)); d.rounded_rectangle([5 * S, 5 * S, self.LARG * S - 1 - 5 * S, h * S + 40], radius=10 * S, fill=(255, 218, 0, 255))
+            self._barras = {k: im.resize((self.LARG, h), Image.LANCZOS)}
+        return self._barras[k]
+    def sons(self): return []
     def draw(self, fr, t):
-        if t < self.barras[0][2] or t > self.t_fold + 0.55 + 0.15: return
-        if t < self.t_fold:
-            L = self.camada(t)
-            if L is not None: colar(fr, L, 0, self.cy - 450)
-        else:
-            if self._final is None:
-                L = self.camada(self.t_fold - 0.01); self._final = L.crop(L.getbbox())
-            bola_saida(fr, self._final, t, self.t_fold, 0.55, W / 2, self.cy + 40)
+        if t < self.t_in - 0.15: return
+        dy = -1100 * clamp((t - self.t_sobe) / 0.55) ** 2 if t > self.t_sobe else 0.0
+        if dy < -1000: return
+        v = self.valor(t); alt = v * self.PX; L = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(L)
+        cx = W / 2; base = self.BASE
+        lw = 760 * clamp((t - self.t_in + 0.15) / 0.2); d.rounded_rectangle([cx - lw / 2, base, cx + lw / 2, base + 6], radius=3, fill=(36, 30, 26, 255))
+        if alt > 4:
+            im = sombra_papel(self._barra(alt), off=8, blur=8, op=0.20); top = base - alt
+            colar(L, im, cx - im.width / 2, base - (im.height - 48) - 24)
+            num = str(int(round(v))); ty = max(top - 215, 70)
+            wn = d.textlength(num, font=self.f_num); wd = d.textlength(' dias', font=self.f_dias); x0 = cx - (wn + wd) / 2
+            d.text((x0, ty), num, font=self.f_num, fill=TINTA); d.text((x0 + wn, ty + 100), ' dias', font=self.f_dias, fill=TINTA)
+        leg = 'mediana' if t < self.t_18 else ('mais rápido' if t < self.t_254 else 'mais lento')
+        if t < self.t_254 + 1.0:
+            lw_ = d.textlength(leg, font=self.f_leg); d.text((cx - lw_ / 2, base + 24), leg, font=self.f_leg, fill=(96, 84, 70, 255))
+        L = L.rotate(balanco(t, 3.3, 1.2) * 0.5, resample=Image.BICUBIC, center=(cx, base))
+        colar(fr, L, 0, int(dy))
 
 class Apresentador:
     """marcador do apresentador: o recorte do print, tamanho zero e zoom de 30% em frases de ênfase"""
@@ -301,32 +299,37 @@ def montar():
     """linha do tempo. Faixa central (y 400 a 850): fotos e infográficos, sem intervalo. Faixa de cima (cy=270): título que sintetiza a frase."""
     neu = Neuronios(cy=620)
     art = [  # (nome, t0, hold, cx, cy, h, rot, fase)
-        ('escova', -0.35, 1.45, 270, 450, 440, -6, 0.0), ('cafe', ini('café') - 0.35, 0.9, 780, 400, 400, 4, 2.1), ('celular', ini('celular') - 0.35, 1.1, 400, 650, 600, -3, 4.2),
+        ('escova', -0.35, 1.45, 270, 450, 440, -6, 0.0), ('cafe', ini('café') - 0.35, 0.9, 780, 420, 340, 4, 2.1), ('celular', ini('celular') - 0.35, 1.1, 400, 650, 600, -3, 4.2),
         ('despertador', 4.0, 1.5, 780, 600, 380, 5, 1.1), ('cerebro', 6.1, 2.0, 540, 580, 430, -3, 3.0), ('maquina', 8.95, 4.6, 540, 600, 470, 2, 5.0),
         ('revista', 32.3, 2.1, 300, 600, 360, -5, 2.6),
-        ('escova', 40.0, 4.35, 210, 600, 300, -6, 0.0), ('cafe', 40.55, 3.8, 520, 520, 280, 4, 2.1), ('celular', 41.1, 3.25, 860, 600, 420, -3, 4.2), ('despertador', 42.9, 1.45, 540, 720, 320, 5, 1.1),
-        ('cronometro', 45.35, 1.45, 540, 580, 430, -3, 3.7), ('livro', ini('livro') - 1.0, 4.5, 270, 520, 290, -4, 1.0), ('prancheta', ini('2010') - 0.4, 4.4, 270, 520, 300, 3, 3.3),
-        ('ampulheta', 67.2, 2.7, 540, 600, 480, -2, 0.7), ('ponte', 70.6, DUR - 70.6 - 1.0, 540, 620, 330, 2, 5.5)]
-    cena = [Foto(a[0], a[1], a[2], a[3], a[4] + (0 if a[0] in ('livro', 'prancheta') else 40), *a[5:]) for a in art]     # fotos 40 px mais baixas: não encostam nos títulos
+        ('caminho', 40.3, 4.05, 540, 600, 400, -2, 1.8),
+        ('cronometro', 45.35, 1.1, 540, 580, 430, -3, 3.7),
+        ('ampulheta', 66.8, 2.8, 540, 600, 480, -2, 0.7), ('ponte', 70.3, DUR - 70.3 - 1.0, 540, 620, 330, 2, 5.5)]
+    cena = [Foto(a[0], a[1], a[2], a[3], a[4] + 40, *a[5:]) for a in art]     # fotos 40 px mais baixas: não encostam nos títulos
+    t_limpa = fim('pacientes'); t_21x = ini('esse'); t_clip = fim('dias', 1) - 0.05                # a folha é limpa quando acaba a história do livro
+    tl = ini('livro') - 0.3
+    cena.append(FotoX('livro', tl, t_limpa - tl - 0.5, 540, 760, 300, -4, 1.0, tx=(ini('cirurgião') - 0.3, ini('cirurgião') + 0.4)))
+    tp = t_limpa + 0.25
+    cena.append(Foto('prancheta', tp, t_clip - tp - 0.5, 190, 745, 250, 3, 3.3))
     cena.append(neu)
-    cena.append(Foto(neu.final().copy(), 35.25, 4.15, 540, 690, 330, -2, 2.0, jornal=False))        # o par de neurônios ligados volta como lembrete da citação
-    cena.append(Grafico())
+    cena.append(Foto(neu.final().copy(), 35.25, 4.15, 540, 650, 330, -2, 2.0, jornal=False))        # o par de neurônios ligados volta como lembrete da citação
+    cena.append(BarraSolo(fim('dias', 1) + 0.2, ini('18') - 0.17, ini('demorou') - 0.02, ini('demorou') + 1.35))
     T = lambda texto, ts, ficar=0.1, **kw: TituloAbs(texto, None, cy=240, ts=ts, ficar=ficar, **kw)
     cena += [
         T('Tudo no automático', [(3.62, 3.9), (3.9, 4.2), (4.2, 4.7)], 0.0),
         T('Uma explicação no cérebro que cabe numa frase', [(6.18, 6.42), (6.42, 6.9), (6.9, 7.12), (7.12, 7.5), (8.18, 8.46), (8.46, 8.62), (8.62, 8.94), (8.94, 9.24)], 0.2),
         T('Donald Hebb, 1949', [(11.4, 11.9), (11.9, 12.28), (12.28, 13.0)], 0.25),
-        T('A ligação fica mais forte', [(17.0, 17.1), (17.1, 17.54), (17.7, 17.98), (17.98, 18.34), (18.34, 18.6)], 0.1),
+        T('Disparar junto muitas vezes fortalece a ligação', [(14.7, 15.4), (15.4, 16.0), (16.0, 16.32), (16.32, 16.8), (17.0, 17.8), (17.8, 17.98), (17.98, 18.6)], 0.1),
+        T('Um dispara, outro responde', [(20.12, 20.4), (20.4, 20.74), (20.9, 21.05), (21.05, 21.15)], 0.0),
         T('Quanto mais repete, mais firme a ponte', [(22.64, 23.3), (23.3, 24.0), (24.6, 25.6), (25.6, 26.8), (27.0, 28.0), (28.0, 28.9), (28.9, 29.9)], 0.0),
-        T('Décadas depois, Carla Shatz', [(31.44, 31.84), (31.84, 32.3), (33.22, 33.6), (33.6, 33.98)], 0.2),
+        T('Décadas depois, Carla Shatz', [(31.44, 31.84), (31.84, 32.3), (33.22, 33.6), (33.6, 33.98)], 0.95),
         TituloAbs('“Neurônios que disparam juntos ficam ligados”', idx('neurônios', 1), idx('ligados'), cy=260, credito='Carla Shatz, 1992', ficar=0.35),
         T('Mesma rotina', [(41.46, 42.16), (42.16, 42.9)], 0.0),
         TituloAbs('Um caminho pronto', idx('caminho') - 1, idx('pronto'), cy=240, ficar=0.4),
-        T('O mito dos 21 dias', [(47.3, 47.4), (47.4, 47.64), (47.64, 47.88), (48.02, 48.4), (48.4, 48.84)], 0.15),
-        T('Livro de 1960', [(50.6, 50.9), (50.9, 51.0), (51.0, 51.26)], 0.1),
-        T('Estudo 2010: 96 pessoas', [(55.08, 55.7), (55.7, 56.6), (57.54, 58.1), (58.1, 58.64)], 0.0),
-        T('Mediana: 66 dias', [(60.4, 60.86), (61.14, 61.86), (61.86, 62.42)], 0.1),
-        T('Cérebro em construção', [pal('cérebro')[1:], pal('ainda')[1:], (fim('ainda'), ini('cada') - 0.75 - 0.6 - 0.02)], 0.0),
+        TituloAbs('21 dias', None, cy=380, ts=[pal('21')[1:], pal('dias')[1:]], x_abs=(t_21x, t_21x + 0.75), teto1=240, ficar=t_limpa - fim('dias')),
+        T('Londres: 96 pessoas', [pal('londres')[1:], pal('96')[1:], pal('pessoas')[1:]], 0.0),
+        TituloAbs('66 dias', None, cy=400, ts=[pal('66')[1:], pal('dias', 1)[1:]], teto1=240, ficar=0.0),
+        T('Cérebro em construção', [pal('cérebro', 1)[1:], pal('ainda')[1:], (fim('ainda'), ini('cada') - 0.75 - 0.6 - 0.02)], 0.0),
         TituloAbs('Cada repetição engrossa a ponte', idx('cada'), idx('ponte', 1), cy=240)]
     zooms = [(ini('cabe') - 0.05, fim('frase')), (ini('neurônios', 1) - 0.05, fim('ligados')), (ini('mediana') - 0.05, fim('dias', 1)), (ini('cada') - 0.05, fim('ponte', 1) + 0.3)]
     return cena, Apresentador(zooms)
@@ -352,11 +355,31 @@ def _cobertura(k):
     a = np.array(L.getchannel('A'))[:860] > 40
     return t, float(a.mean()), float(a[:430].mean())
 
+def _sobreposicao(k):
+    """pares de peças que se cobrem: (tempo, nome_a, nome_b, fração da menor coberta)"""
+    t = k / 5.0; mascaras = []
+    for c in _cena:
+        L = Image.new('RGBA', (W, H), (0, 0, 0, 0)); c.draw(L, t); a = np.array(L.getchannel('A'))[::4, ::4] > 40
+        if a.sum() > 400: mascaras.append((getattr(c, 'nome', type(c).__name__), a))
+    r = []
+    for i in range(len(mascaras)):
+        for j in range(i + 1, len(mascaras)):
+            (na, a), (nb, b) = mascaras[i], mascaras[j]; inter = (a & b).sum(); menor = min(a.sum(), b.sum())
+            if menor > 0 and inter / menor > 0.12: r.append((t, na, nb, round(float(inter / menor), 2)))
+    return r
+
 def eventos_sfx(cena):
-    return sorted(e for c in cena if hasattr(c, 'sons') for e in c.sons())
+    return sorted(e for c in cena if isinstance(c, TituloAbs) for e in c.sons())          # som de papel só nas tiras de título
 
 if __name__ == '__main__':
     args = [a for a in sys.argv[1:] if not a.startswith('--')]; flags = [a for a in sys.argv[1:] if a.startswith('--')]
+    if '--sobrepor' in flags:
+        with Pool(4, initializer=_init) as p: r = sorted(sum(p.map(_sobreposicao, range(int(DUR * 5)), chunksize=8), []))
+        grupos = {}
+        for t, na, nb, f in r: grupos.setdefault((na, nb), []).append((t, f))
+        for (na, nb), v in grupos.items():
+            ts_ = [t for t, f in v]; print(f'{na} x {nb}: {min(ts_):.1f} a {max(ts_) + 0.2:.1f} s, cobertura máxima {max(f for t, f in v):.0%}, {len(v)} amostras')
+        sys.exit()
     if '--auditar' in flags:
         with Pool(4, initializer=_init) as p: r = sorted(p.map(_cobertura, range(int(DUR * 5)), chunksize=8))
         vazio = [(t, c, ct) for t, c, ct in r if c < 0.045]
@@ -384,3 +407,6 @@ if __name__ == '__main__':
         subprocess.run([FF, '-nostdin', '-loglevel', 'error', '-y', '-framerate', str(FPS), '-i', os.path.join(pasta, 'f%05d.jpg'), '-i', audio,
                         '-t', str(DUR), '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', saida], check=True)
         shutil.rmtree(pasta); print('ok', saida)
+        rapido = saida.replace('.mp4', '_x1.10.mp4')                  # 10% mais rápido, voz sem mudar de tom
+        subprocess.run([FF, '-nostdin', '-loglevel', 'error', '-y', '-i', saida, '-filter_complex', f'[0:v]setpts=PTS/1.1,fps={FPS}[v];[0:a]atempo=1.1[a]', '-map', '[v]', '-map', '[a]',
+                        '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', rapido], check=True); print('ok', rapido)

@@ -105,13 +105,13 @@ class TiraDobravel(BolaPapel):
 
 
 class Titulo:
-    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0), credito=None, ficar=0.9):
+    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0), credito=None, ficar=0.9, teto1=200, x_tempos=None):
         self.palavras = texto.split(); self.entrada = entrada; self.cy = cy; self.rot = rot
         self.cor_marca = cor_marca; n = len(self.palavras)
         self.n_linhas = 1 if n <= 3 else 2
         self.linhas = _quebra(self.palavras, self.n_linhas)
         d = ImageDraw.Draw(Image.new('RGB', (1, 1)))
-        teto = 200 if self.n_linhas == 1 else 130
+        teto = teto1 if self.n_linhas == 1 else 130
         tam = teto
         while True:
             f = _fonte(tam)
@@ -132,7 +132,7 @@ class Titulo:
             t0 = 0.85 if self.entrada == 'dobra' else (1.05 if self.entrada == 'desdobra' else 0.70); self.tempos = [(t0 + i / vel, t0 + (i + 0.92) / vel) for i in range(n)]
         else: self.tempos = tempos
         self.dur_entrada, self.dur_saida = {'dobra': (0.70, 0.60), 'desdobra': (1.0, 0.9)}.get(self.entrada, (0.55, 0.45)); self._folds = {}
-        self.t_fim = self.tempos[-1][1]; self.ficar = ficar
+        self.t_fim = self.tempos[-1][1]; self.ficar = ficar; self.x_tempos = x_tempos
         self.duracao = self.t_fim + ficar + self.dur_saida
 
     # ------------------------------------------------------------ a tira de papel rasgado
@@ -217,6 +217,9 @@ class Titulo:
         if self.credito:
             fc = _fonte(max(24, int(0.42 * S)), 480); lc = d.textlength(self.credito, font=fc)
             d.text((pad + (self.w - lc) / 2, pad + self.pady + self.n_linhas * self.lh + 0.02 * S), self.credito, font=fc, fill=(110, 96, 80, 255))
+        if self.x_tempos:                                                   # X de marca-texto vermelho por cima da tira inteira
+            from marcador import riscar_x
+            im = riscar_x(im, (t_leitura - self.x_tempos[0]) / (self.x_tempos[1] - self.x_tempos[0]), caixa=(pad, pad, pad + self.w, pad + self.h), margem=0.05)
         return im
 
 
@@ -262,7 +265,7 @@ class Titulo:
             tt = max(0.0, min(1.0, t / self.dur_entrada if not saindo else 1 - sair / self.dur_saida))
             if tt < 1.0:
                 chave = 's' if saindo else 'e'
-                if chave not in self._folds: self._folds[chave] = TiraDobravel(self._conteudo(self.t_fim + 1.0 if saindo else 0.0), self.seed)
+                if chave not in self._folds: self._folds[chave] = TiraDobravel(self._conteudo(self.t_fim + max(1.0, self.ficar) if saindo else 0.0), self.seed)
                 if saindo:
                     c = _ease_in(1 - tt) if False else (1 - tt) ** 1.0
                 else: c = 1 - tt

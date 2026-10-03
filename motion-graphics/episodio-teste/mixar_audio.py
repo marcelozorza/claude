@@ -15,7 +15,7 @@ def _ler(path, canais=2, ss=0.0, t=None):
 
 def db(x): return 20 * np.log10(np.maximum(x, 1e-9))
 
-def _segmento(x, a, b, pico_db=-10.0, fade=0.01, fade_fim=0.06):
+def _segmento(x, a, b, pico_db=-16.0, fade=0.01, fade_fim=0.06):
     """trecho do som de papel, normalizado, com entrada seca (já começa no estalo) e saída curta"""
     y = x[int(a * SR):int(b * SR)].copy(); y *= 10 ** (pico_db / 20) / max(1e-6, np.abs(y).max())
     f0, f1 = int(fade * SR), int(fade_fim * SR); y[:f0] *= np.linspace(0, 1, f0)[:, None]; y[-f1:] *= np.linspace(1, 0, f1)[:, None]
