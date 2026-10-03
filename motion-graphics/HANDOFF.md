@@ -21,7 +21,7 @@ Ele monta tudo manualmente. Não montar o vídeo inteiro nem entregar apresentad
 | Papel quadriculado | aprovado | `assets/graph_paper_1080x1920.png`, `lib/fundo.py` |
 | Bola de papel (entrada e saída de fotos) | aprovada | `lib/bola.py`, `lib/animfoto.py`, `lib/papel.py`, `demos/demo_bola.py` |
 | Chroma key e cor do apresentador | aprovado | `lib/chroma.py` |
-| **Título na tela (tira de papel rasgado)** | **em revisão** | `lib/titulo.py`, `demos/demo_titulo.py`, `fonts/EBGaramond-Italic.ttf` |
+| Título na tela (tira de papel rasgado) | **aprovado** (entrada `'dobra'`, ritmo e linha do vinco corrigidos) | `lib/titulo.py`, `demos/demo_titulo.py`, `fonts/EBGaramond-Italic.ttf` |
 | Recortes prontos (18 figuras + logo) | prontos | `assets/recortes/` |
 | Montagem completa do vídeo (referência) | rascunho | `montagem/montar.py`, `montagem/cortes_e_momentos.txt` |
 
@@ -50,15 +50,13 @@ t.duracao          # entrada + leitura + saída
 - Rodar o teste: `python3 demos/demo_titulo.py` (gera `demos/saida/titulo_dobra.mp4` em 540x960, exige ffmpeg e leva alguns minutos).
 
 ## Próximo passo
-1. Confirmar com o usuário se o ritmo das dobras agora está bom (versão com metade dos frames). Alternativa que ele pode pedir:
-   cada pose segurada por 2 quadros em vez de pular quadros.
-2. Pendências do título, a decidir com ele:
-   - tamanho do quadradinho final (parâmetro `alvo` em `TiraDobravel.__init__`)
-   - alargar a tira para cerca de 1020 px em títulos de 10 palavras (`largura_max`, ganha uns 10% de fonte)
-   - usar os tempos reais das palavras da transcrição no marca-texto
-3. Aplicar o mesmo balanço de poucos graus aos recortes e cartões da bola de papel (`lib/animfoto.py`), para tudo ter a mesma sensação.
-4. Depois, conforme o usuário pedir: recomposição sobre o corte final dele, renderização em alta e entrega.
+O título está aprovado. Perguntar ao usuário qual é a próxima peça. Candidatas já mencionadas por ele:
+1. Aplicar o mesmo balanço de poucos graus aos recortes e cartões da bola de papel (`lib/animfoto.py`), para tudo ter a mesma sensação.
+2. Títulos reais: usar os tempos das palavras da transcrição no marca-texto e, se necessário, alargar a tira para cerca de 1020 px
+   em títulos de 10 palavras (`largura_max`, ganha uns 10% de fonte). O tamanho do quadradinho final é o parâmetro `alvo` em `TiraDobravel.__init__`.
+3. Recomposição sobre o corte final dele no CapCut, renderização em alta e entrega.
    Arquivos acima de 30 MiB sobem pelo fluxo `request_upload` + PUT + `finalize_upload` do Magnific.
+Registrar aqui, ao fim de cada peça aprovada, o estado novo e o próximo passo.
 
 ## Detalhes técnicos que evitam retrabalho
 - Python com PIL, numpy e scipy (sem cv2 nem skimage). ffmpeg estático em `~/bin/ffmpeg`. Canvas 1080x1920 a 30 fps.

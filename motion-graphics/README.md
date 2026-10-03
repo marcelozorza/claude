@@ -24,7 +24,7 @@ b.quadro(1.0)    # bola fechada
 ```
 `estado()` já cuida da sequência inteira: entrada (0,5 s), parada, saída (0,5 s) e o sumiço da bola.
 
-## Título na tela (em revisão)
+## Título na tela
 Frase em tira de papel rasgado, EB Garamond itálico, com marca-texto passando conforme a fala. Entra e sai como um quadradinho
 que se desdobra com as dobras reais da bola de papel. Detalhes e pendências em `HANDOFF.md`.
 
