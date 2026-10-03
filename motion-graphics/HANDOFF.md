@@ -77,6 +77,18 @@ t.duracao          # entrada + leitura + saída
 - Whisper (faster-whisper, modelo medium) instalado via pip nesta sessão. Reinstalar se o container for novo.
 - Conta Magnific: não há fotos de escova, café, celular nem livro. Só contact sheets de outros projetos. Custo de uma geração: cerca de 100 créditos (saldo 208.605).
 
+## Episódio de teste montado (pré-visualização)
+- `episodio-teste/montar_episodio.py [saida.mp4] [escala] [quadros,avulsos]` renderiza em 4 processos (cerca de 1 min a 540x960) e junta com `audio_limpo.wav`.
+  Escala 1.0 gera 1080x1920. O vídeo tem 76 s (74,2 s de áudio mais o fim do último título).
+- Tempos vêm de `transcricao_limpa.json` pelas funções `ini()`, `fim()` e `idx()`. Se regravar, refazer a transcrição e rodar de novo.
+- Peças novas no script: `Foto` (bola de papel), `Neuronios` (dois neurônios de papel e cordão que engrossa, pulsos amarelos, arrasto e saída em bola),
+  `Grafico` (barras de papel que caem, X vermelho no mito, marca-texto na mediana, saída em bola), `Apresentador` (marcador com zoom de 30% em quatro frases).
+- `Titulo` ganhou o parâmetro `credito` (linha pequena sob o texto, usada na citação). Citação = `Titulo` com aspas e crédito.
+- Títulos e citação ficam em cy=400, acima da cabeça mesmo no zoom (cabeça sobe a y=592).
+- Fotos geradas no Magnific (folha de 6 objetos, ampliadas 2x e sem fundo) em `episodio-teste/fotos/`: escova, cafe, celular, livro, despertador, prancheta.
+  Despertador não é usado. Custo total da rodada: cerca de 780 créditos.
+- Pendente de aprovação: ritmo, tamanho das peças, zoom que cobre o gráfico em "66 dias", cores dos neurônios, corte seco do zoom.
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,

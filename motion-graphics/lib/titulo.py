@@ -105,7 +105,7 @@ class TiraDobravel(BolaPapel):
 
 
 class Titulo:
-    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0)):
+    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0), credito=None):
         self.palavras = texto.split(); self.entrada = entrada; self.cy = cy; self.rot = rot
         self.cor_marca = cor_marca; n = len(self.palavras)
         self.n_linhas = 1 if n <= 3 else 2
@@ -122,6 +122,8 @@ class Titulo:
         self.lh = int(tam * 1.10)
         self.padx = int(0.55 * tam) + 20; self.pady = int(0.42 * tam) + 12
         self.w = int(larg + 2 * self.padx); self.h = int(self.lh * self.n_linhas + 2 * self.pady)
+        self.credito = credito; self.cred_h = (int(0.58 * tam) + 8) if credito else 0
+        self.h += self.cred_h
         self.seed = seed
         self._faixa()
         self._palavras_pos(d)
@@ -212,6 +214,9 @@ class Titulo:
         for li, l in enumerate(self.linhas):
             larg = d.textlength(l, font=self.f)
             d.text((pad + (self.w - larg) / 2, pad + self.pady + li * self.lh - 0.02 * S), l, font=self.f, fill=TINTA)
+        if self.credito:
+            fc = _fonte(max(24, int(0.42 * S)), 480); lc = d.textlength(self.credito, font=fc)
+            d.text((pad + (self.w - lc) / 2, pad + self.pady + self.n_linhas * self.lh + 0.02 * S), self.credito, font=fc, fill=(110, 96, 80, 255))
         return im
 
 
