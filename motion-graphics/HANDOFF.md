@@ -69,6 +69,14 @@ t.duracao          # entrada + leitura + saída
 - Cada frase muda de tamanho (zero para grande e volta), para dar ênfase e quebrar o ritmo. Ele pode ficar na frente do infográfico.
 - Quadros de conferência: `episodio-teste/saida/quadro_zero.png` e `quadro_grande.png`.
 
+## Áudio do episódio de teste
+- Original: 2 min 01 s. Limpo: `episodio-teste/audio_limpo.wav` e `.mp3` (74,2 s, 19 trechos). Mapa de cortes em `cortes_audio.json`.
+- Cortados: silêncios, a primeira tomada de "Na centésima", "vou gravar tudo de novo" e as quatro tentativas erradas da citação (fica a última, 69,65 s do original).
+- Transcrição com tempos por palavra do áudio limpo: `transcricao_limpa.json`. Fala real difere um pouco do roteiro ("Em 1949, psicólogo", "pesquisadoras", "lema na área").
+  Usar o texto falado nos títulos e na citação, com a grafia correta "Carla Shatz".
+- Whisper (faster-whisper, modelo medium) instalado via pip nesta sessão. Reinstalar se o container for novo.
+- Conta Magnific: não há fotos de escova, café, celular nem livro. Só contact sheets de outros projetos. Custo de uma geração: cerca de 100 créditos (saldo 208.605).
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,
