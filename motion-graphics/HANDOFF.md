@@ -139,6 +139,11 @@ t.duracao          # entrada + leitura + saída
   e a segunda linha começa no instante em que a primeira termina. Mesma velocidade em todos os títulos. A frase de duas linhas da citação leva 1,9 s, os títulos curtos de 0,8 a 1,0 s.
 - Verificado medindo a frente do amarelo quadro a quadro: avanço linear de 56 px por 0,07 s.
 
+## Abertura sem o relógio e conferência da velocidade
+- O despertador saiu da abertura. Para o centro não ficar vazio, o celular ficou mais tempo (até 5,3 s) e o cérebro entra em 5,2 s.
+- Velocidade conferida em 10%: vídeo de 65,3 s vira 59,37 s e as palavras da fala aparecem 1,10 vez mais cedo no arquivo acelerado (medido com transcrição do áudio).
+  O vídeo ficou bem mais curto que as versões anteriores (74 s) por causa dos cortes de conteúdo, não só da aceleração.
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,

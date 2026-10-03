@@ -304,8 +304,8 @@ def montar():
     neu = Neuronios(cy=620); t_fold = neu.t_fold
     t_cam = t_fold + 0.3; t_21 = ini('21') - 0.85                                         # o caminho fica sozinho até o "21 dias" entrar
     art = [  # (nome, t0, hold, cx, cy, h, rot, fase)
-        ('escova', -0.35, 1.45, 270, 450, 440, -6, 0.0), ('cafe', ini('café') - 0.35, 0.9, 780, 420, 340, 4, 2.1), ('celular', ini('celular') - 0.35, 1.1, 400, 650, 600, -3, 4.2),
-        ('despertador', 4.0, 1.5, 780, 600, 380, 5, 1.1), ('cerebro', 6.1, 2.0, 540, 580, 430, -3, 3.0),     # a máquina de escrever saiu e nada entra no lugar (pedido do usuário)
+        ('escova', -0.35, 1.45, 270, 450, 440, -6, 0.0), ('cafe', ini('café') - 0.35, 0.9, 780, 420, 340, 4, 2.1), ('celular', ini('celular') - 0.35, 1.8, 400, 650, 600, -3, 4.2),
+        ('cerebro', 5.2, 2.9, 540, 580, 430, -3, 3.0),     # a máquina de escrever saiu e nada entra no lugar (pedido do usuário)
         
         ('caminho', t_cam, t_21 - 0.1 - t_cam - 0.5, 540, 600, 400, -2, 1.8)]
     cena = [Foto(a[0], a[1], a[2], a[3], a[4] + 40, *a[5:]) for a in art]     # fotos 40 px mais baixas: não encostam nos títulos
