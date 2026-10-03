@@ -105,7 +105,7 @@ class TiraDobravel(BolaPapel):
 
 
 class Titulo:
-    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0), credito=None, ficar=0.9, teto1=200, x_tempos=None):
+    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0), credito=None, ficar=0.9, teto1=200, x_tempos=None, varredura=False, vel_px=750.0):
         self.palavras = texto.split(); self.entrada = entrada; self.cy = cy; self.rot = rot
         self.cor_marca = cor_marca; n = len(self.palavras)
         self.n_linhas = 1 if n <= 3 else 2
@@ -128,7 +128,8 @@ class Titulo:
         self._faixa()
         self._palavras_pos(d)
         # tempos de cada palavra (início, fim)
-        if tempos is None:
+        if tempos is None and varredura: self.tempos = self._varredura(vel_px)       # a caneta passa uma vez, em velocidade constante, logo depois da tira abrir
+        elif tempos is None:
             t0 = 0.85 if self.entrada == 'dobra' else (1.05 if self.entrada == 'desdobra' else 0.70); self.tempos = [(t0 + i / vel, t0 + (i + 0.92) / vel) for i in range(n)]
         else: self.tempos = tempos
         self.dur_entrada, self.dur_saida = {'dobra': (0.70, 0.60), 'desdobra': (1.0, 0.9)}.get(self.entrada, (0.55, 0.45)); self._folds = {}
@@ -171,6 +172,15 @@ class Titulo:
                 ini = x0 + d.textlength(cur + (' ' if cur else ''), font=self.f)
                 cur = (cur + ' ' + pal).strip()
                 self.pos.append((li, ini, x0 + d.textlength(cur, font=self.f)))
+
+    def _varredura(self, v):
+        """(inicio, fim) de cada palavra para uma passada única da caneta, com a mesma velocidade em pixels por segundo"""
+        t = 0.85; ts = []; ant = None
+        for li, a, b in self.pos:
+            if ant is not None:
+                t += (0.12 if li != ant[0] else max(0.0, a - ant[1]) / v)
+            ts.append((t, t + (b - a) / v)); t += (b - a) / v; ant = (li, b)
+        return ts
 
     # ------------------------------------------------------------ o texto e a marca-texto
     def _conteudo(self, t_leitura):

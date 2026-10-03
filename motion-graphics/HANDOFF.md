@@ -128,6 +128,12 @@ t.duracao          # entrada + leitura + saída
 - A máquina de escrever saiu **sem nada no lugar**. O cérebro voltou a sair em 9,1 s e a tela fica sem peça de 9,1 a 11,9 s, a pedido (a regra "nunca vazio" não vale aqui).
 - A citação começa a entrar quando ele fala "Hebb" (`entra=ini('hebb')`, 11,9 s).
 
+## Caneta de marca-texto em animação única (regra do usuário)
+- **A caneta não acompanha a fala.** Em todo título: a tira desdobra, o texto aparece, a caneta passa uma vez a 750 px/s (`Titulo(varredura=True, vel_px=750)`) e o destaque fica.
+  No script, `TituloAbs(texto, None, entra=..., sai=...)`: `entra` é quando a tira começa a abrir, `sai` quando começa a dobrar para sair. A fala só decide esses dois instantes.
+  O X do "21 dias" continua amarrado à fala.
+- O cronômetro saiu. O diorama do caminho fica de 31,9 s até o "21 dias" entrar (39,0 s).
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,

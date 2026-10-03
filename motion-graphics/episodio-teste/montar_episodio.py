@@ -112,7 +112,11 @@ class FotoX(Foto):
 class TituloAbs:
     """título cujas palavras seguem o tempo da fala. a, b = índices da primeira e da última palavra na transcrição,
     ou, com a=None, ts = lista de (inicio, fim) por palavra do texto (texto livre que sintetiza a frase)"""
-    def __init__(self, texto, a, b=None, cy=270, ts=None, x_abs=None, entra=None, **kw):
+    def __init__(self, texto, a, b=None, cy=270, ts=None, x_abs=None, entra=None, sai=None, **kw):
+        if sai is not None:                                  # animação única: a tira abre, a caneta passa uma vez e o destaque fica até a saída
+            self.t0 = entra; self.t = Titulo(texto, entrada='dobra', cy=cy, varredura=True, ficar=0.0, **{k: v for k, v in kw.items() if k != 'ficar'})
+            if x_abs: self.t.x_tempos = (x_abs[0] - self.t0, x_abs[1] - self.t0)
+            self.t.ficar = max(0.0, sai - self.t0 - self.t.t_fim); self.t.duracao = self.t.t_fim + self.t.ficar + self.t.dur_saida; self.nome = 'título ' + texto[:22]; return
         ts = ts or tempos(a, b); self.t0 = entra if entra is not None else ts[0][0] - 0.85; self.nome = 'título ' + texto[:22]
         if x_abs: kw['x_tempos'] = (x_abs[0] - self.t0, x_abs[1] - self.t0)
         self.t = Titulo(texto, tempos=[(x - self.t0, y - self.t0) for x, y in ts], entrada='dobra', cy=cy, **kw)
@@ -298,12 +302,12 @@ class Apresentador:
 def montar():
     """linha do tempo. Faixa central (y 400 a 850): fotos e infográficos. Faixa de cima (cy 240): citação e títulos. Legenda: fica por conta do editor (embaixo)."""
     neu = Neuronios(cy=620); t_fold = neu.t_fold
-    t_cam = t_fold + 0.3; t_cron = ini('quanto') - 0.25                                  # caminho depois dos neurônios, cronômetro em "quanto tempo"
+    t_cam = t_fold + 0.3; t_21 = ini('21') - 0.85                                         # o caminho fica sozinho até o "21 dias" entrar
     art = [  # (nome, t0, hold, cx, cy, h, rot, fase)
         ('escova', -0.35, 1.45, 270, 450, 440, -6, 0.0), ('cafe', ini('café') - 0.35, 0.9, 780, 420, 340, 4, 2.1), ('celular', ini('celular') - 0.35, 1.1, 400, 650, 600, -3, 4.2),
         ('despertador', 4.0, 1.5, 780, 600, 380, 5, 1.1), ('cerebro', 6.1, 2.0, 540, 580, 430, -3, 3.0),     # a máquina de escrever saiu e nada entra no lugar (pedido do usuário)
         
-        ('caminho', t_cam, t_cron - t_cam - 1.0, 540, 600, 400, -2, 1.8), ('cronometro', t_cron, 1.1, 540, 580, 430, -3, 3.7)]
+        ('caminho', t_cam, t_21 - 0.1 - t_cam - 0.5, 540, 600, 400, -2, 1.8)]
     cena = [Foto(a[0], a[1], a[2], a[3], a[4] + 40, *a[5:]) for a in art]     # fotos 40 px mais baixas: não encostam nos títulos
     t_limpa = fim('pacientes'); t_21x = ini('esse'); t_clip = fim('dias', 1) - 0.05    # a folha é limpa quando acaba a história do número de 21 dias
     tp = t_limpa + 0.25
@@ -313,15 +317,13 @@ def montar():
     cena.append(barra)
     cena.append(Foto('ampulheta', barra.t_sobe + 0.35, 100, 540, 640, 480, -2, 0.7))        # fica até o último quadro
     T = lambda texto, ts, ficar=0.1, **kw: TituloAbs(texto, None, cy=240, ts=ts, ficar=ficar, **kw)
-    # a citação fica no alto durante todo o infográfico; o marca-texto avança junto com a animação
-    tc = neu.t_cai[0]
-    q_ts = [(tc, tc + 0.7), (tc + 0.7, ini('disparar')), (ini('disparar'), ini('muitas') + 0.9), (ini('pense'), ini('dispara') + 0.5), (neu.t_fio, neu.t_fio + 0.4), (neu.t_fio + 0.4, neu.t_fio + 1.2)]
+    # os títulos têm uma animação só: a tira abre, a caneta passa uma vez em velocidade constante e o destaque fica. A fala não comanda a caneta.
     cena += [
-        TituloAbs('“Neurônios que disparam juntos ficam ligados”', None, cy=240, ts=q_ts, entra=ini('hebb'), ficar=t_fold - q_ts[-1][1]),
-        TituloAbs('21 dias', None, cy=380, ts=[pal('21')[1:], pal('dias')[1:]], x_abs=(t_21x, t_21x + 0.75), teto1=240, ficar=t_limpa - fim('dias')),
-        T('Londres: 96 pessoas', [pal('londres')[1:], pal('96')[1:], pal('pessoas')[1:]], 0.0),
-        TituloAbs('66 dias', None, cy=400, ts=[pal('66')[1:], pal('dias', 1)[1:]], teto1=240, ficar=0.0),
-        T('Cérebro em construção', [pal('cérebro', 1)[1:], pal('ainda')[1:], (ini('construindo'), fim('ligação', 1))], 60.0)]       # fica até o último quadro
+        TituloAbs('“Neurônios que disparam juntos ficam ligados”', None, cy=240, entra=ini('hebb'), sai=t_fold),
+        TituloAbs('21 dias', None, cy=380, entra=ini('21') - 0.85, sai=t_limpa, x_abs=(t_21x, t_21x + 0.75), teto1=240),
+        TituloAbs('Londres: 96 pessoas', None, cy=240, entra=ini('londres') - 0.85, sai=fim('pessoas')),
+        TituloAbs('66 dias', None, cy=400, entra=ini('66') - 0.85, sai=fim('dias', 1), teto1=240),
+        TituloAbs('Cérebro em construção', None, cy=240, entra=pal('cérebro', 1)[1] - 0.85, sai=1000.0)]       # fica até o último quadro
     zooms = [(ini('cabe') - 0.05, fim('frase')), (ini('assim') - 0.05, fim('forma')), (ini('mediana') - 0.05, fim('dias', 1)), (ini('cada') - 0.05, fim('ponte', 1) + 0.3)]
     return cena, Apresentador(zooms)
 
