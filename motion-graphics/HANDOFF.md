@@ -134,6 +134,11 @@ t.duracao          # entrada + leitura + saída
   O X do "21 dias" continua amarrado à fala.
 - O cronômetro saiu. O diorama do caminho fica de 31,9 s até o "21 dias" entrar (39,0 s).
 
+## Caneta contínua (correção da regra anterior)
+- A versão anterior ainda andava palavra por palavra. Agora a ponta da caneta avança **sem parar a 800 px/s** (`_varredura` e `self.varr` em `lib/titulo.py`),
+  e a segunda linha começa no instante em que a primeira termina. Mesma velocidade em todos os títulos. A frase de duas linhas da citação leva 1,9 s, os títulos curtos de 0,8 a 1,0 s.
+- Verificado medindo a frente do amarelo quadro a quadro: avanço linear de 56 px por 0,07 s.
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,

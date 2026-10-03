@@ -105,7 +105,7 @@ class TiraDobravel(BolaPapel):
 
 
 class Titulo:
-    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0), credito=None, ficar=0.9, teto1=200, x_tempos=None, varredura=False, vel_px=750.0):
+    def __init__(self, texto, tempos=None, entrada='dobra', cy=560, rot=-1.6, largura_max=960, seed=3, vel=2.6, cor_marca=(255, 226, 0), credito=None, ficar=0.9, teto1=200, x_tempos=None, varredura=False, vel_px=800.0):
         self.palavras = texto.split(); self.entrada = entrada; self.cy = cy; self.rot = rot
         self.cor_marca = cor_marca; n = len(self.palavras)
         self.n_linhas = 1 if n <= 3 else 2
@@ -128,6 +128,7 @@ class Titulo:
         self._faixa()
         self._palavras_pos(d)
         # tempos de cada palavra (início, fim)
+        self.varr = None
         if tempos is None and varredura: self.tempos = self._varredura(vel_px)       # a caneta passa uma vez, em velocidade constante, logo depois da tira abrir
         elif tempos is None:
             t0 = 0.85 if self.entrada == 'dobra' else (1.05 if self.entrada == 'desdobra' else 0.70); self.tempos = [(t0 + i / vel, t0 + (i + 0.92) / vel) for i in range(n)]
@@ -174,13 +175,12 @@ class Titulo:
                 self.pos.append((li, ini, x0 + d.textlength(cur, font=self.f)))
 
     def _varredura(self, v):
-        """(inicio, fim) de cada palavra para uma passada única da caneta, com a mesma velocidade em pixels por segundo"""
-        t = 0.85; ts = []; ant = None
-        for li, a, b in self.pos:
-            if ant is not None:
-                t += (0.12 if li != ant[0] else max(0.0, a - ant[1]) / v)
-            ts.append((t, t + (b - a) / v)); t += (b - a) / v; ant = (li, b)
-        return ts
+        """passada única da caneta: velocidade constante em pixels por segundo, as linhas em sequência, sem pausa. Devolve (inicio, fim) geral."""
+        lens = []; offs = []; acc = 0.0
+        for li in range(self.n_linhas):
+            ps = [p for p in self.pos if p[0] == li]; lens.append(ps[-1][2] - ps[0][1]); offs.append(acc); acc += lens[-1]
+        t_ini = 0.85; self.varr = (t_ini, v, offs, lens)
+        return [(t_ini, t_ini + acc / v)]
 
     # ------------------------------------------------------------ o texto e a marca-texto
     def _conteudo(self, t_leitura):
@@ -196,11 +196,15 @@ class Titulo:
                 x_ini = self.pos[idx[0]][1]
                 # avanço da caneta nesta linha
                 xp = x_ini
-                for i in idx:
-                    _, a, b = self.pos[i]; t0, t1 = self.tempos[i]
-                    if t_leitura >= t1: xp = b
-                    elif t_leitura > t0: xp = a + (b - a) * ((t_leitura - t0) / (t1 - t0)); break
-                    else: break
+                if self.varr:                                   # passada única: a ponta avança sem parar, na mesma velocidade, de uma linha para a outra
+                    t_ini, v, offs, lens = self.varr
+                    xp = x_ini + min(lens[li], max(0.0, v * (t_leitura - t_ini) - offs[li]))
+                else:
+                    for i in idx:
+                        _, a, b = self.pos[i]; t0, t1 = self.tempos[i]
+                        if t_leitura >= t1: xp = b
+                        elif t_leitura > t0: xp = a + (b - a) * ((t_leitura - t0) / (t1 - t0)); break
+                        else: break
                 if xp <= x_ini + 2: continue
                 base_y = pad + self.pady + li * self.lh + S * 0.88
                 y0 = base_y - 0.60 * S; y1 = base_y + 0.14 * S
