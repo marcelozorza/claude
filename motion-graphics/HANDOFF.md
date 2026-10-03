@@ -62,6 +62,11 @@ t.duracao          # entrada + leitura + saída
 - `demos/demo_bola.py` continua quebrado fora da pasta original (importa `montar` e lê `cut/`).
 
 ## Próximo passo
+**Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
+Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,
+gráfico de barras), usar `Titulo(..., tempos=...)` nos dois títulos e combinar tudo sobre o vídeo dele.
+O balanço nos recortes continua aguardando aprovação.
+
 Mostrar `demos/saida/balanco.mp4` ao usuário e pedir aprovação do balanço nos recortes (amplitude e se a pulsação de escala sai).
 Depois, as candidatas restantes:
 1. Títulos reais: usar os tempos das palavras da transcrição no marca-texto e, se necessário, alargar a tira para cerca de 1020 px
