@@ -1,0 +1,43 @@
+CORTES DO BRUTO C0088.MP4 (tempo do bruto -> tempo do vídeo de fundo)
+Cada trecho do bruto entra um depois do outro. O fundo foi montado em cima dessa sequência.
+Frases cortadas: tomadas largadas, pausas longas e a frase das bets.
+
+ 1  bruto 0:40.36 a 0:45.61   ->  vídeo 0:00.00 a 0:05.25   (dur 5.25s)
+ 2  bruto 0:46.60 a 0:52.09   ->  vídeo 0:05.25 a 0:10.74   (dur 5.49s)
+ 3  bruto 0:53.07 a 1:03.15   ->  vídeo 0:10.74 a 0:20.82   (dur 10.08s)
+ 4  bruto 1:07.92 a 1:16.50   ->  vídeo 0:20.82 a 0:29.40   (dur 8.58s)
+ 5  bruto 1:17.30 a 1:20.31   ->  vídeo 0:29.40 a 0:32.42   (dur 3.02s)
+ 6  bruto 1:30.39 a 1:34.80   ->  vídeo 0:32.42 a 0:36.82   (dur 4.40s)
+ 7  bruto 1:35.22 a 1:43.09   ->  vídeo 0:36.82 a 0:44.69   (dur 7.87s)
+ 8  bruto 1:46.30 a 1:53.88   ->  vídeo 0:44.69 a 0:52.26   (dur 7.57s)
+ 9  bruto 2:18.29 a 2:26.59   ->  vídeo 0:52.26 a 1:00.55   (dur 8.29s)
+10  bruto 2:29.92 a 2:32.34   ->  vídeo 1:00.55 a 1:02.97   (dur 2.42s)
+11  bruto 2:35.09 a 2:48.50   ->  vídeo 1:02.97 a 1:16.38   (dur 13.41s)
+12  bruto 2:51.34 a 2:54.06   ->  vídeo 1:16.38 a 1:19.09   (dur 2.71s)
+13  bruto 2:54.50 a 2:59.81   ->  vídeo 1:19.09 a 1:24.39   (dur 5.30s)
+14  bruto 3:12.70 a 3:16.94   ->  vídeo 1:24.39 a 1:28.63   (dur 4.24s)
+15  bruto 3:27.97 a 3:38.69   ->  vídeo 1:28.63 a 1:39.35   (dur 10.72s)
+16  bruto 3:45.04 a 3:54.85   ->  vídeo 1:39.35 a 1:49.16   (dur 9.81s)
+
+Fim da fala no vídeo: 1:49.16. O logo entra em 1:49.31 e o vídeo termina em 1:52.40.
+
+MOMENTOS DAS IMAGENS (tempo do vídeo)
+  recorte de foto   0:01.38 a 0:04.54
+  recorte de foto   0:02.14 a 0:05.77
+  imagem de apoio   0:07.51 a 0:10.88
+  recorte de foto   0:22.15 a 0:28.67
+  recorte de foto   0:22.89 a 0:28.67
+  recorte de foto   0:23.59 a 0:28.67
+  recorte de foto   0:33.42 a 0:37.24
+  recorte de foto   0:35.90 a 0:37.54
+  cartão de estudo  0:37.03 a 0:44.81
+  recorte de foto   0:39.12 a 0:45.13
+  cartão de estudo  0:45.23 a 0:52.51
+  recorte de foto   0:47.71 a 0:52.78
+  recorte de foto   1:04.67 a 1:07.51
+  recorte de foto   1:07.41 a 1:09.11
+  imagem de apoio   1:09.43 a 1:19.12
+  recorte de foto   1:20.01 a 1:24.81
+  recorte de foto   1:31.16 a 1:33.14
+  imagem de apoio   1:38.22 a 1:40.25
+  logo              1:49.31 em diante
