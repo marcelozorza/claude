@@ -1,0 +1,292 @@
+<title>Linha do Tempo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;1,500&family=Oswald:wght@500;600&display=swap">
+<style>
+/* Mesa de revisão do vídeo: papel quadriculado creme, tinta escura e marca-texto amarelo, as cores da marca.
+   Layout: coluna única de celular. Vídeo em 9:16, leitura de tempo grande, linha do tempo com faixas, pedidos de ajuste embaixo. */
+:root {
+  --bg: #F1E5C9; --surf: #F8F0DC; --ink: #241E1A; --mute: #6B5E4E; --line: #D6C7A4; --hi: #FFE200; --hi-ink: #241E1A; --play: #D8402F;
+  --c-fala: #CDBF9C; --c-titulo: #FFE200; --c-foto: #C9A36B; --c-anim: #E27A5C; --c-zoom: #7DA9BF; --c-som: #241E1A;
+  --serif: "EB Garamond", Georgia, "Times New Roman", serif; --num: "Oswald", "Arial Narrow", Impact, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #1D1915; --surf: #28231D; --ink: #F1E5C9; --mute: #A89A82; --line: #3F372D; --hi: #FFE200; --hi-ink: #1D1915; --play: #FF6A55;
+  --c-fala: #4A4236; --c-titulo: #E8CF00; --c-foto: #A4814F; --c-anim: #D26A4D; --c-zoom: #5E8BA2; --c-som: #F1E5C9; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #1D1915; --surf: #28231D; --ink: #F1E5C9; --mute: #A89A82; --line: #3F372D; --hi: #FFE200; --hi-ink: #1D1915; --play: #FF6A55;
+  --c-fala: #4A4236; --c-titulo: #E8CF00; --c-foto: #A4814F; --c-anim: #D26A4D; --c-zoom: #5E8BA2; --c-som: #F1E5C9; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--serif); font-size: 17px; line-height: 1.35;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 28px 28px; background-position: -1px -1px; }
+.wrap { max-width: 620px; margin-inline: auto; padding-inline: 16px; padding-block: 14px 40px; display: grid; gap: 14px; }
+h1 { font-style: italic; font-weight: 500; font-size: 1.9rem; margin: 0; line-height: 1.05; }
+.meta { color: var(--mute); font-size: .88rem; margin: 2px 0 0; }
+.palco { display: grid; justify-items: center; }
+.tela { position: relative; width: min(100%, calc(56vh * 9 / 16)); aspect-ratio: 9 / 16; background: #000; border-radius: 6px; overflow: hidden; box-shadow: 0 8px 18px rgba(36,30,26,.28); }
+.tela video { width: 100%; height: 100%; display: block; object-fit: contain; }
+.tela .erro { position: absolute; inset: 0; display: grid; place-content: center; padding: 20px; text-align: center; color: #F1E5C9; font-size: .95rem; }
+.fala-agora { min-height: 2.7em; margin: 0; padding: 8px 12px; background: var(--surf); border-radius: 6px; font-size: .98rem; border: 1px solid var(--line); }
+.fala-agora mark { background: var(--hi); color: var(--hi-ink); padding: 0 3px; border-radius: 2px; }
+.leitura { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.leitura .t { font-family: var(--num); font-weight: 600; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+.leitura .t small { font-size: 1.1rem; font-weight: 500; color: var(--mute); }
+.leitura .q { font-family: var(--num); font-weight: 500; font-size: 1.05rem; color: var(--mute); font-variant-numeric: tabular-nums; text-align: right; }
+.leitura .q b { color: var(--ink); font-weight: 600; }
+.barra { display: grid; grid-template-columns: repeat(5, 1fr) auto; gap: 8px; align-items: stretch; }
+button, select { font: inherit; color: var(--ink); background: var(--surf); border: 1.5px solid var(--ink); border-radius: 6px; padding: 10px 6px; min-height: 46px; cursor: pointer; }
+button:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--hi); outline-offset: 2px; }
+button:active { transform: translateY(1px); }
+.play { background: var(--hi); color: var(--hi-ink); font-weight: 600; font-size: 1.2rem; }
+.mini { font-size: .9rem; }
+select { padding-inline: 8px; }
+.zbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.zbar .rot { font-size: .85rem; color: var(--mute); text-transform: uppercase; letter-spacing: .08em; }
+.zbar .grp { display: flex; gap: 6px; }
+.zbar button { min-height: 38px; padding: 4px 12px; }
+.zbar button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.linha { display: grid; grid-template-columns: 74px 1fr; border: 1.5px solid var(--ink); border-radius: 6px; background: var(--surf); overflow: hidden; }
+.nomes { border-right: 1.5px solid var(--ink); }
+.nomes div, .ruler-nome { display: flex; align-items: center; padding-inline: 8px; font-size: .86rem; color: var(--mute); border-bottom: 1px solid var(--line); }
+.ruler-nome { height: 30px; }
+.rolagem { overflow-x: auto; position: relative; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+.canvas { position: relative; }
+.ruler { position: sticky; top: 0; height: 30px; border-bottom: 1px solid var(--line); touch-action: none; cursor: col-resize; background: var(--surf); }
+.ruler i { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line); font-style: normal; font-family: var(--num); font-size: .72rem; color: var(--mute); padding-left: 3px; padding-top: 8px; }
+.ruler i.g { border-left-color: var(--mute); }
+.faixa { position: relative; border-bottom: 1px solid var(--line); }
+.it { position: absolute; height: 26px; border-radius: 4px; padding: 3px 6px; font-size: .78rem; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 1.5px solid var(--ink); cursor: pointer; color: var(--ink); user-select: none; }
+.it.sel { outline: 3px solid var(--play); outline-offset: 1px; z-index: 2; }
+.it.fica::after { content: " ›"; font-weight: 600; }
+.it.pt { width: 3px !important; padding: 0; border: 0; background: var(--c-som); border-radius: 1px; height: 22px; }
+.cabeca { position: absolute; top: 0; bottom: 0; width: 0; border-left: 2px solid var(--play); z-index: 3; pointer-events: none; }
+.cabeca::before { content: ""; position: absolute; top: 0; left: -7px; border: 6px solid transparent; border-top: 9px solid var(--play); }
+.card { background: var(--surf); border: 1.5px solid var(--ink); border-radius: 6px; padding: 10px 12px; display: grid; gap: 8px; }
+.card h2 { margin: 0; font-size: 1.05rem; font-style: italic; font-weight: 500; }
+.card .d { font-family: var(--num); font-variant-numeric: tabular-nums; color: var(--mute); font-size: .95rem; }
+h2.sec { margin: 6px 0 0; font-size: 1.35rem; font-style: italic; font-weight: 500; }
+textarea { width: 100%; min-height: 70px; font: inherit; color: var(--ink); background: var(--surf); border: 1.5px solid var(--ink); border-radius: 6px; padding: 8px 10px; resize: vertical; }
+.linha-b { display: flex; gap: 8px; flex-wrap: wrap; }
+.linha-b .gr { flex: 1 1 180px; background: var(--hi); color: var(--hi-ink); font-weight: 600; }
+ul.notas { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+ul.notas li { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: start; background: var(--surf); border: 1.5px solid var(--ink); border-radius: 6px; padding: 8px 10px; }
+ul.notas li.feito { opacity: .55; }
+ul.notas li.feito .tx { text-decoration: line-through; }
+.chip { font-family: var(--num); font-weight: 600; font-variant-numeric: tabular-nums; background: var(--hi); color: var(--hi-ink); border: 1.5px solid var(--ink); border-radius: 4px; padding: 4px 8px; min-height: 0; font-size: .95rem; white-space: nowrap; }
+.tx { min-width: 0; overflow-wrap: anywhere; }
+.acoes { display: flex; gap: 6px; }
+.acoes button { min-height: 36px; padding: 2px 10px; }
+.aviso { font-size: .85rem; color: var(--mute); margin: 0; }
+.vazio { color: var(--mute); font-style: italic; margin: 0; }
+.ok { color: var(--ink); font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<main class="wrap">
+  <header>
+    <h1>Linha do tempo</h1>
+    <p class="meta" id="meta">Carregando a versão do vídeo.</p>
+  </header>
+
+  <section class="palco" aria-label="Vídeo">
+    <div class="tela">
+      <video id="v" src="episodio.mp4" playsinline preload="auto"></video>
+      <div class="erro" id="erroV" hidden>O vídeo não carregou. Recarregue a página.</div>
+    </div>
+  </section>
+
+  <p class="fala-agora" id="fala" aria-live="off">Toque em tocar para ouvir a fala.</p>
+
+  <section class="leitura" aria-label="Posição">
+    <div class="t"><span id="seg">0,00</span> <small>s</small></div>
+    <div class="q">quadro <b id="qd">0</b> de <span id="qt">0</span><br>acelerado <b id="ac">0,00</b> s</div>
+  </section>
+
+  <section class="barra" aria-label="Controles">
+    <button id="m1" title="Voltar 1 segundo">−1 s</button>
+    <button id="mq" title="Voltar 1 quadro">◀ quadro</button>
+    <button id="pl" class="play" title="Tocar ou pausar">▶</button>
+    <button id="pq" title="Avançar 1 quadro">quadro ▶</button>
+    <button id="p1" title="Avançar 1 segundo">+1 s</button>
+    <select id="vel" aria-label="Velocidade"><option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="1" selected>1×</option></select>
+  </section>
+
+  <section aria-label="Linha do tempo" style="display:grid;gap:8px">
+    <div class="zbar">
+      <span class="rot">Faixas</span>
+      <span class="grp">
+        <button id="zm" aria-label="Diminuir o zoom">−</button><button id="zp" aria-label="Aumentar o zoom">+</button>
+        <button id="seg-btn" aria-pressed="true">Seguir</button>
+      </span>
+    </div>
+    <div class="linha">
+      <div class="nomes" id="nomes"></div>
+      <div class="rolagem" id="rol"><div class="canvas" id="cv"></div></div>
+    </div>
+    <p class="aviso">Toque na régua para ir a um ponto. Toque numa peça para ir ao início dela. Os tempos são os do vídeo em velocidade normal.</p>
+  </section>
+
+  <section class="card" id="card" hidden>
+    <h2 id="cNome"></h2>
+    <div class="d" id="cTempo"></div>
+    <div class="linha-b"><button id="cPedir" class="gr">Pedir ajuste nesta peça</button><button id="cFechar">Fechar</button></div>
+  </section>
+
+  <section style="display:grid;gap:10px" aria-label="Pedidos de ajuste">
+    <h2 class="sec">Pedidos de ajuste</h2>
+    <label for="txt" class="aviso">Escreva o que trocar. O ponto marcado é o instante em que o vídeo está parado.</label>
+    <textarea id="txt" placeholder="Ex.: aqui a barra deve começar mais cedo"></textarea>
+    <div class="linha-b"><button id="marcar" class="gr">Marcar em 0,00 s</button><button id="copiar">Copiar todos</button></div>
+    <p class="aviso" id="estado"></p>
+    <ul class="notas" id="lista"></ul>
+  </section>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var v = $('v'), TL = null, FPS = 30, DUR = 0, ACEL = 1.1, pps = 14, seguir = true, sel = null, itensDom = [];
+  var fmt = function (x) { return x.toFixed(2).replace('.', ','); };
+  var quadro = function (t) { return Math.round(t * FPS); };
+
+  // ---------- linha do tempo
+  function lanes(itens) {
+    var fim = [], r = [];                                  // empilha pelo espaço realmente ocupado na tela, em pixels
+    itens.forEach(function (it) {
+      var a = it.ini * pps, b = a + (it.fim - it.ini < 0.01 ? 4 : Math.max(10, (it.fim - it.ini) * pps)), k = 0;
+      while (fim[k] !== undefined && fim[k] > a - 3) k++;
+      fim[k] = b; r.push(k);
+    });
+    return { lane: r, n: Math.max(1, fim.length) };
+  }
+  function montar() {
+    var W = Math.max(280, Math.ceil(DUR * pps)), cv = $('cv'), nomes = $('nomes'); cv.innerHTML = ''; nomes.innerHTML = ''; itensDom = [];
+    cv.style.width = W + 'px';
+    var rn = document.createElement('div'); rn.className = 'ruler-nome'; rn.textContent = 'tempo'; nomes.appendChild(rn);
+    var ruler = document.createElement('div'); ruler.className = 'ruler'; ruler.id = 'ruler'; cv.appendChild(ruler);
+    var passo = pps >= 30 ? 1 : (pps >= 14 ? 2 : 5);
+    for (var s = 0; s <= DUR; s += 1) {
+      if (s % passo) continue; var i = document.createElement('i'); i.style.left = (s * pps) + 'px'; i.className = s % 5 === 0 ? 'g' : ''; i.textContent = s; ruler.appendChild(i);
+    }
+    TL.faixas.forEach(function (f, fi) {
+      var L = lanes(f.itens), h = L.n * 30 + 4, d = document.createElement('div'); d.className = 'faixa'; d.style.height = h + 'px';
+      f.itens.forEach(function (it, k) {
+        var e = document.createElement('div'), pt = it.fim - it.ini < 0.01;
+        e.className = 'it' + (pt ? ' pt' : '') + (it.fica ? ' fica' : ''); e.style.left = (it.ini * pps) + 'px';
+        if (!pt) e.style.width = Math.max(10, (it.fim - it.ini) * pps) + 'px';
+        e.style.top = (2 + L.lane[k] * 30) + 'px'; e.style.background = 'var(--c-' + (f.id === 'titulos' ? 'titulo' : f.id === 'fotos' ? 'foto' : f.id === 'anim' ? 'anim' : f.id === 'zoom' ? 'zoom' : f.id === 'som' ? 'som' : 'fala') + ')';
+        e.textContent = pt ? '' : it.rotulo; e.title = it.rotulo;
+        e.addEventListener('click', function (ev) { ev.stopPropagation(); escolher(f, it, e); });
+        d.appendChild(e); itensDom.push({ el: e, f: f, it: it });
+      });
+      cv.appendChild(d);
+      var nm = document.createElement('div'); nm.style.height = h + 'px'; nm.textContent = f.nome; nomes.appendChild(nm);
+    });
+    var cab = document.createElement('div'); cab.className = 'cabeca'; cab.id = 'cab'; cv.appendChild(cab);
+    ruler.addEventListener('pointerdown', function (e) { ruler.setPointerCapture(e.pointerId); irX(e); ruler.onpointermove = irX; });
+    ruler.addEventListener('pointerup', function () { ruler.onpointermove = null; });
+    cv.addEventListener('click', function (e) { if (e.target.closest('.it')) return; irX(e); });
+    posicionar();
+  }
+  function irX(e) { var r = $('cv').getBoundingClientRect(); ir((e.clientX - r.left) / pps); }
+  function escolher(f, it, el) {
+    itensDom.forEach(function (x) { x.el.classList.remove('sel'); }); el.classList.add('sel'); sel = { f: f, it: it };
+    $('card').hidden = false; $('cNome').textContent = f.nome + ': ' + it.rotulo;
+    $('cTempo').textContent = (it.fim - it.ini < 0.01 ? 'em ' + fmt(it.ini) + ' s' : fmt(it.ini) + ' s a ' + fmt(it.fim) + ' s (' + fmt(it.fim - it.ini) + ' s)') + (it.fica ? ', fica até o fim' : '');
+    ir(it.ini);
+  }
+  $('cFechar').onclick = function () { $('card').hidden = true; itensDom.forEach(function (x) { x.el.classList.remove('sel'); }); sel = null; };
+  $('cPedir').onclick = function () {
+    if (!sel) return; var t = $('txt'); t.value = sel.f.nome + ' “' + sel.it.rotulo + '” (' + fmt(sel.it.ini) + ' s a ' + fmt(sel.it.fim) + ' s): '; t.focus(); t.setSelectionRange(t.value.length, t.value.length);
+  };
+
+  // ---------- reprodução
+  function ir(t) { v.currentTime = Math.min(Math.max(0, t), Math.max(0, DUR - 0.001)); atualizar(); }
+  function passo(n) { v.pause(); ir((quadro(v.currentTime) + n + 0.5) / FPS); }
+  $('m1').onclick = function () { ir(v.currentTime - 1); }; $('p1').onclick = function () { ir(v.currentTime + 1); };
+  $('mq').onclick = function () { passo(-1); }; $('pq').onclick = function () { passo(1); };
+  $('pl').onclick = function () { if (v.paused) v.play(); else v.pause(); };
+  v.addEventListener('click', function () { if (v.paused) v.play(); else v.pause(); });
+  v.addEventListener('play', function () { $('pl').textContent = '❚❚'; loop(); }); v.addEventListener('pause', function () { $('pl').textContent = '▶'; atualizar(); });
+  v.addEventListener('seeked', atualizar); v.addEventListener('error', function () { $('erroV').hidden = false; });
+  $('vel').onchange = function () { v.playbackRate = parseFloat(this.value); };
+  $('zp').onclick = function () { pps = Math.min(80, pps * 1.4); montar(); centrar(); }; $('zm').onclick = function () { pps = Math.max(6, pps / 1.4); montar(); centrar(); };
+  $('seg-btn').onclick = function () { seguir = !seguir; this.setAttribute('aria-pressed', seguir); };
+  function centrar() { var r = $('rol'); r.scrollLeft = v.currentTime * pps - r.clientWidth / 2; }
+  function loop() { atualizar(); if (!v.paused) requestAnimationFrame(loop); }
+
+  var palavras = [], ult = -1;
+  function atualizar() {
+    var t = v.currentTime || 0;
+    $('seg').textContent = fmt(t); $('qd').textContent = quadro(t); $('ac').textContent = fmt(t / ACEL); $('marcar').textContent = 'Marcar em ' + fmt(t) + ' s';
+    posicionar();
+    // palavra falada agora
+    var k = -1; for (var i = 0; i < palavras.length; i++) { if (t >= palavras[i][1] - 0.05 && t < palavras[i][2] + 0.05) { k = i; break; } if (palavras[i][1] > t) break; }
+    if (k !== ult) {
+      ult = k; var f = $('fala');
+      if (k < 0) { if (!palavras.length) return; f.textContent = '(sem fala neste instante)'; return; }
+      var a = Math.max(0, k - 6), b = Math.min(palavras.length, k + 7); f.innerHTML = '';
+      for (var j = a; j < b; j++) { var s = document.createElement(j === k ? 'mark' : 'span'); s.textContent = palavras[j][0] + ' '; f.appendChild(s); }
+    }
+  }
+  function posicionar() {
+    var cab = $('cab'); if (!cab) return; var x = (v.currentTime || 0) * pps; cab.style.left = x + 'px';
+    if (seguir && !v.paused) { var r = $('rol'); if (x < r.scrollLeft + 20 || x > r.scrollLeft + r.clientWidth - 40) r.scrollLeft = x - r.clientWidth * 0.3; }
+  }
+
+  // ---------- pedidos de ajuste
+  var notas = [], dbN = null, usarLocal = false, LKEY = 'notas-linha-do-tempo';
+  function lerLocal() { try { return JSON.parse(localStorage.getItem(LKEY) || '[]'); } catch (e) { return []; } }
+  function gravarLocal() { try { localStorage.setItem(LKEY, JSON.stringify(notas)); } catch (e) {} }
+  function desenhar() {
+    var ul = $('lista'); ul.innerHTML = '';
+    if (!notas.length) { var p = document.createElement('li'); p.style.display = 'block'; p.innerHTML = '<p class="vazio">Nenhum pedido ainda. Pause no ponto certo, escreva o que trocar e toque em marcar.</p>'; ul.appendChild(p); return; }
+    notas.slice().sort(function (a, b) { return a.t - b.t; }).forEach(function (n) {
+      var li = document.createElement('li'); if (n.feito) li.className = 'feito';
+      var c = document.createElement('button'); c.className = 'chip'; c.textContent = fmt(n.t) + ' s'; c.onclick = function () { ir(n.t); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+      var tx = document.createElement('div'); tx.className = 'tx'; tx.textContent = n.texto || '(sem texto)';
+      var ac = document.createElement('div'); ac.className = 'acoes';
+      var ok = document.createElement('button'); ok.textContent = n.feito ? '↺' : '✓'; ok.title = n.feito ? 'Reabrir' : 'Marcar como feito'; ok.onclick = function () { alternar(n); };
+      var ex = document.createElement('button'); ex.textContent = '✕'; ex.title = 'Apagar'; ex.onclick = function () { apagar(n); };
+      ac.appendChild(ok); ac.appendChild(ex); li.appendChild(c); li.appendChild(tx); li.appendChild(ac); ul.appendChild(li);
+    });
+  }
+  function aviso(t, ok) { var e = $('estado'); e.textContent = t; e.className = 'aviso' + (ok ? ' ok' : ''); }
+  $('marcar').onclick = function () {
+    var txt = $('txt').value.trim(), t = Math.round(v.currentTime * 100) / 100, n = { t: t, quadro: quadro(t), texto: txt, feito: false, criado: Date.now() };
+    v.pause();
+    if (dbN && !usarLocal) {
+      dbN.collection('notas').add(n).then(function () { $('txt').value = ''; aviso('Salvo no ponto ' + fmt(t) + ' s. O Claude lê esta lista direto.', true); })
+        .catch(function () { usarLocal = true; local(n); });
+    } else local(n);
+  };
+  function local(n) { n.id = 'l' + Date.now(); notas.push(n); gravarLocal(); desenhar(); $('txt').value = ''; aviso('Salvo só neste aparelho. Use Copiar todos para colar no chat.', false); }
+  function alternar(n) { if (n.id && String(n.id)[0] === 'l') { n.feito = !n.feito; gravarLocal(); desenhar(); } else if (dbN) dbN.doc('notas/' + n.id).update({ feito: !n.feito }).catch(function () {}); }
+  function apagar(n) { if (n.id && String(n.id)[0] === 'l') { notas = notas.filter(function (x) { return x !== n; }); gravarLocal(); desenhar(); } else if (dbN) dbN.doc('notas/' + n.id).delete().catch(function () {}); }
+  $('copiar').onclick = function () {
+    var txt = notas.slice().sort(function (a, b) { return a.t - b.t; }).filter(function (n) { return !n.feito; }).map(function (n) { return fmt(n.t) + ' s (quadro ' + n.quadro + '): ' + (n.texto || ''); }).join('\n');
+    if (!txt) { aviso('Nada pendente para copiar.', false); return; }
+    var fim = function () { aviso('Copiado. Cole no chat com o Claude.', true); };
+    try { navigator.clipboard.writeText(txt).then(fim, function () { sel2(txt); }); } catch (e) { sel2(txt); }
+  };
+  function sel2(txt) { var t = $('txt'); t.value = txt; t.focus(); t.select(); aviso('Selecione e copie o texto acima.', false); }
+
+  function iniciarNotas() {
+    if (!window.claude || !claude.use) { usarLocal = true; notas = lerLocal(); desenhar(); aviso('Sem sincronização neste aparelho. Os pedidos ficam só aqui.', false); return; }
+    claude.use('db').then(function (db) {
+      if (!db) { usarLocal = true; notas = lerLocal(); desenhar(); aviso('Entre na conta para sincronizar. Por ora os pedidos ficam só neste aparelho.', false); return; }
+      dbN = db; db.collection('notas').orderBy('t').onSnapshot(function (s) {
+        notas = s.docs.map(function (d) { var x = Object.assign({}, d.data()); x.id = d.id; return x; }); desenhar();
+        if (!s.metadata.fromCache) aviso(notas.length ? '' : '', false);
+      }, function () { usarLocal = true; notas = lerLocal(); desenhar(); aviso('Sem acesso à lista compartilhada. Os pedidos ficam só neste aparelho.', false); });
+    }).catch(function () { usarLocal = true; notas = lerLocal(); desenhar(); });
+  }
+
+  // ---------- início
+  desenhar();
+  fetch('timeline.json').then(function (r) { return r.json(); }).then(function (j) {
+    TL = j; FPS = j.fps; DUR = j.duracao; ACEL = j.aceleracao; palavras = j.palavras || []; $('qt').textContent = Math.round(DUR * FPS);
+    $('meta').textContent = 'Versão de ' + j.versao + ' · ' + fmt(DUR) + ' s em velocidade normal, ' + fmt(DUR / ACEL) + ' s acelerado';
+    montar(); iniciarNotas(); atualizar();
+  }).catch(function () { $('meta').textContent = 'Não consegui carregar os dados da linha do tempo.'; iniciarNotas(); });
+})();
+</script>

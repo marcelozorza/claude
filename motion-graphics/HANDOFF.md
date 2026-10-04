@@ -144,6 +144,13 @@ t.duracao          # entrada + leitura + saída
 - Velocidade conferida em 10%: vídeo de 65,3 s vira 59,37 s e as palavras da fala aparecem 1,10 vez mais cedo no arquivo acelerado (medido com transcrição do áudio).
   O vídeo ficou bem mais curto que as versões anteriores (74 s) por causa dos cortes de conteúdo, não só da aceleração.
 
+## Prévia com linha do tempo (Artifact)
+- Página publicada: https://claude.ai/artifact/WgLDQL7ezNtDu48x494TXK (privada, abre no celular). Vídeo, leitura de segundo e quadro, faixas (fala, títulos, fotos, animações, zoom, papel), palavra falada no instante e **lista de pedidos de ajuste** salva no `db` (coleção `notas`: `t`, `quadro`, `texto`, `feito`). Ler com `ArtifactData list notas`.
+- Para atualizar depois de cada renderização: `python3 episodio-teste/gerar_timeline.py` (gera `previa/timeline.json` e `previa/episodio.mp4` a partir de `saida/episodio_preview.mp4`) e republicar `previa/index.html` na mesma URL com `files` = `episodio.mp4` e `timeline.json`.
+- Os tempos da página são do vídeo em **velocidade normal**. O acelerado (÷1,1) aparece só como referência.
+- Remotion Studio (projeto `vox/`) precisa de porta aberta, e a sessão na nuvem não expõe porta ao celular. Por isso a prévia é um player com linha do tempo, não um editor ao vivo.
+- Limite conhecido: a prévia mostra o último render. Cada mudança ainda exige renderizar (cerca de 1 a 2 min a 540x960).
+
 ## Próximo passo
 **Episódio de teste em andamento.** O roteiro de 90 s está em `episodio-teste/roteiro.md` (226 palavras). O usuário vai gravar.
 Com a gravação: transcrever com tempos por palavra, fazer as peças que faltam (infográfico de Hebb, citação entre aspas,
