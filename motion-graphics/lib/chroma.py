@@ -27,7 +27,7 @@ def grade(rgba, temp=0.18, matiz=0.18, sat=0.18):
     return out
 
 
-def key_robusto(a, lo=14, hi=44, spill=0.92, corte_y=None, borda=8, miolo=6, max_buraco=1800):
+def key_robusto(a, lo=26, hi=60, spill=0.92, corte_y=None, borda=10, miolo=2, max_buraco=1800):
     """chroma key para figura inteira sobre pano verde, com luz irregular. a: HxWx3 uint8. Devolve HxWx4 uint8.
     1) alfa pela dominância do verde, com limiares baixos (derruba o feixe de luz, que fica verde claro)
     2) fica só o maior bloco conectado (a figura), tapa buracos e torna o miolo opaco (acaba com as manchas na camisa preta)
@@ -49,7 +49,7 @@ def key_robusto(a, lo=14, hi=44, spill=0.92, corte_y=None, borda=8, miolo=6, max
     perto = ndi.binary_dilation(fig, iterations=borda)
     alfa = np.maximum(a0 * perto, miolo_m.astype(np.float32))
     alfa = ndi.gaussian_filter(alfa, 0.6)
-    alfa = np.clip((alfa - 0.25) / 0.6, 0, 1)                              # aperta a borda: tira o aro cinza de pixels metade pano, metade pele ou camisa
+    alfa = np.clip((alfa - 0.10) / 0.7, 0, 1)                              # aperta a borda: tira o aro cinza de pixels metade pano, metade pele ou camisa
     lim = np.maximum(r, b) * spill + 4
     out = np.dstack([r, np.minimum(g, lim), b, alfa * 255])
     return np.clip(out, 0, 255).astype(np.uint8)
