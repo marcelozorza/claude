@@ -2,6 +2,16 @@
 
 Documento interno. Não entregar ao usuário como arquivo de leitura (regra: nunca .md, só .docx ou .txt).
 
+
+## Roteiro do dia 05/10, 19:07 (vídeo sobre sentimentos pós-eleição)
+Cinco infográficos escolhidos, numerados na ordem em que aparecem no roteiro. Storyboards em projeto-eleicao/storyboards/ (gerados por montagem/storyboards.py). Estado: storyboards enviados, aguardando o usuário escolher quais construir primeiro (sugestão: I1, I3, I4).
+- I1 As duas dores que vêm depois: uma flecha acerta o peito (inevitável), duas outras partem antes de chegar (evitáveis).
+- I2 O humor pinta os pensamentos: nuvens claras ao redor de um busto são cobertas por mancha cinza, depois se soltam e vão embora.
+- I3 Respirar com a expiração mais longa: círculo cresce rápido e encolhe devagar, com onda de subida curta e descida longa e duas barras (curta amarela, longa azul).
+- I4 Não há volta, só para cima: ladrilhos desabam atrás de um boneco e degraus sobem à frente.
+- I5 O pequeno que continua: curva vermelha de fúria dispara e despenca, linha azul fina continua, cartazes de papel formam uma seta para cima.
+Todos sem texto na tela. Não usar o símbolo de cruz no mosaico de cartazes (usar seta).
+
 ## Regras do usuário
 - FAIXA DE CIMA PROIBIDA (6 de outubro): por causa da interface do Instagram, nada pode ser desenhado nos 15% de cima do quadro (y < 288 em 1920). Vale para a arte, os títulos de tira rasgada, a sombra e a bolinha em voo. Embaixo pode, porque é onde o usuário aparece. O gerador (gerar_cenas.py) mede o ponto mais alto de cada cena com bola_cena.topo_minimo e RECUSA gerar se passar de y=288. Títulos futuros: cy tem que deixar o topo da tira em y >= 288. O arco da bolinha ficou mais baixo (subida de 110 a 120 px) por isso.
 - SEM TEXTO NARRANDO (6 de outubro): nunca escrever na tela texto que narre ou explique o que acontece no infográfico (rótulos, legendas, setas com palavras). A imagem se explica sozinha. Os títulos do roteiro quem coloca é o usuário na edição.
