@@ -14,6 +14,7 @@ def pal(txt, n=0):
 def ini(txt, n=0): return pal(txt, n)[1]
 def fim(txt, n=0): return pal(txt, n)[2]
 DUR = 191.6
+SEM_AP = os.environ.get('SEM_APRESENTADOR') == '1'      # só o fundo com as peças, sem a figura (para sobrepor depois)
 
 def foto(nome, h=460, maxw=800):
     im = Image.open(os.path.join(FOTOS, nome + ('.png' if os.path.exists(os.path.join(FOTOS, nome + '.png')) else '.jpg'))).convert('RGBA'); im.thumbnail((maxw, h), Image.LANCZOS); return im
@@ -85,10 +86,10 @@ def _init():
 def quadro(k, escala, pasta):
     t = k / FPS; fr = _fundo.copy()
     for c in _cena: c.draw(fr, t)
-    _ap.draw(fr, t)
+    if not SEM_AP: _ap.draw(fr, t)
     for c in _frente: c.draw(fr, t)
     if escala != 1.0: fr = fr.resize((int(W * escala), int(H * escala)), Image.LANCZOS)
-    fr.convert('RGB').save(os.path.join(pasta, f'f{k:05d}.jpg'), quality=92)
+    fr.convert('RGB').save(os.path.join(pasta, f'f{k:05d}.jpg'), quality=95 if SEM_AP else 92)
 def _job(a): return quadro(*a)
 
 def mixar_voz(eventos, saida, dur):
@@ -116,6 +117,9 @@ if __name__ == '__main__':
     with Pool(4, initializer=_init) as p:
         for i, _ in enumerate(p.imap_unordered(_job, [(k, escala, pasta) for k in range(N)], chunksize=4)):
             if i % 300 == 0: print(i, '/', N, flush=True)
+    if SEM_AP:
+        subprocess.run(['ffmpeg', '-nostdin', '-loglevel', 'error', '-y', '-framerate', str(FPS), '-i', os.path.join(pasta, 'f%05d.jpg'), '-t', str(DUR), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-pix_fmt', 'yuv420p', '-an', saida], check=True)
+        shutil.rmtree(pasta); print('ok', saida); sys.exit()
     if not os.path.exists(os.path.join(TRAB, 'voz.wav')): subprocess.run(['ffmpeg', '-nostdin', '-loglevel', 'error', '-y', '-i', '/home/user/bruto/brutoempatia.mp4', '-vn', '-ac', '2', '-ar', '44100', os.path.join(TRAB, 'voz.wav')], check=True)
     cena = montar()[0]; ev = sorted(e for c in cena if isinstance(c, TituloAbs) for e in c.sons() if e[0] < DUR - 0.3)
     audio = mixar_voz(ev, os.path.join(TRAB, 'audio_final.wav'), DUR)
