@@ -430,7 +430,7 @@ class Logo:
 # ------------------------------------------------------------------ apresentador
 class Apresentador:
     """figura do bruto com chroma key, cor e corte aprovados (CORTE_Y). Ocupa cerca de 60% da tela embaixo, com zoom de 30% em algumas frases."""
-    TOPO_RAW, S0, ZOOM = 190, 1.15, 1.3
+    TOPO_RAW, S0, ZOOM, CX = 190, 1.15, 1.3, 462      # CX: centro horizontal da figura no quadro original (extensão medida: x 58 a 873)
     def __init__(self, zooms):
         from chroma_quadro import processa, CORTE_Y
         self.processa, self.corte, self.zooms = processa, CORTE_Y, zooms
@@ -440,4 +440,4 @@ class Apresentador:
         pe = Image.fromarray(self.processa(raw), 'RGBA').crop((0, self.TOPO_RAW, W, self.corte))
         m = self.ZOOM if any(a <= t < b for a, b in self.zooms) else 1.0
         s = self.S0 * m; pe = pe.resize((int(pe.width * s), int(pe.height * s)), Image.LANCZOS)
-        x0 = (pe.width - W) // 2; pe = pe.crop((x0, 0, x0 + W, pe.height)); fr.alpha_composite(pe, (0, H - pe.height))
+        colar(fr, pe, W / 2 - self.CX * s, H - pe.height)
