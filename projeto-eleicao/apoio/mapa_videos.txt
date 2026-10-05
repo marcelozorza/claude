@@ -1,0 +1,21 @@
+VÍDEOS DE APOIO RECEBIDOS (pasta do Drive, 5 de outubro)
+Todos em 1080x1920, H.264. Baixados em /home/user/bruto/apoio/ (fora do repositório). Taxas de quadros mistas (24, 25 e 30): conformar para 30 na montagem.
+
+arquivo                                   duração   cena prevista                                  observação
+0_Book_Leather_1080x1920.mp4              6,0 s     9a, livro antigo (5 s)                         macro de livro de couro, serve
+0_Cathedral_Brasilia_1080x1920.mp4        20,6 s    4 e 5a, Congresso e Esplanada (5,5 s + 7 s)    uma tomada contínua de 12,5 s cobre as duas cenas
+0_Crossing_Street_1080x1920.mp4           10,0 s    10a, multidão vista de cima (3 s)              cruzamento visto do alto, tem áudio ambiente (silenciar)
+0_People_Crowd_1080x1920.mp4              10,0 s    10b, rostos, "Você é gente" (6,5 s)            animação ilustrada de multidão diversa, combina com o papel
+0_Emotional_Office_1080x1920.mp4          5,5 s     7b, pessoa de cabeça baixa (8 s)               CURTO: faltam 2,5 s. Opções: câmera lenta a 0,7x ou reaproveitar com reversão
+0_Microphone_Studio_Microphone_1080x1920  11,8 s    13b, microfone de podcast (3,5 s)              sobra
+0_Pregnant_Hospital_1080x1920.mp4         15,5 s    16b, hospital (3 s)                            casal na maternidade, é o que mais se aproxima de "imigrantes pobres sem documentos"
+0_Vertical_Video_Ward_1080x1920.mp4       16,1 s    17, paciente atendido (5 s)                    médica e enfermeira atendendo paciente, serve
+
+FALTAM: 1a (pessoa acordando e olhando o celular) e 1b (pessoa sorrindo para o celular).
+Não veio sala de espera de clínica para 16b. Pregnant_Hospital cobre, se você aprovar.
+
+DECISÕES DO USUÁRIO (5 de outubro)
+- 1a e 1b: usar um único vídeo, o da pessoa mexendo no celular. Arquivo ainda não está na pasta.
+- 7b: Emotional_Office em câmera lenta (0,7x) para chegar a 8 s.
+- 16b: usar o vídeo do casal (Pregnant_Hospital).
+- O bruto brutoempatia.mp4 (3 min 11 s, 1080x1920, 30 qps) já vem cortado pelo usuário. Não há tentativas repetidas.
