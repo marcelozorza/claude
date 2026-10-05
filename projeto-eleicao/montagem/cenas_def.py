@@ -12,11 +12,11 @@ def _foto(nome, h=480, maxw=820):
     im = Image.open(os.path.join(FOTOS, nome + ext)).convert('RGBA'); im.thumbnail((maxw, h), Image.LANCZOS); return recorte_jornal(im, seed=7)
 K = dict(t0=-1, t1=1e9, modo='fixo')
 def foto_camara():
-    return Cena([Cutout(_foto('camara'), cx=540, cy=575, rot=-2.5, fase=0.5, nome='foto câmara', **K)], nome='foto')
+    return Cena([Cutout(_foto('camara'), cx=540, cy=630, rot=-2.5, fase=0.5, nome='foto câmara', **K)], nome='foto')
 def numero_121():
-    return Cena([Cutout(tira_texto('121', 230, seed=3, padx=120), cx=540, cy=520, rot=-2, fase=0.4, nome='121', **K), Etiqueta('deputados federais', -1, 1e9, 640, 700, tam=56, rot=3, fase=1.2)], nome='número')
+    return Cena([Cutout(tira_texto('121', 190, seed=3, padx=100), cx=540, cy=620, rot=-2, fase=0.4, nome='121', **K), Etiqueta('deputados federais', -1, 1e9, 640, 790, tam=56, rot=3, fase=1.2)], nome='número')
 def carimbos():
-    return Cena([Carimbo('INIMIGO', -1, 1e9, 540, 400, -6, tam=130, seed=1), Carimbo('TRAIDOR', -1, 1e9, 540, 580, 4, tam=130, seed=2), Carimbo('PARASITA', -1, 1e9, 540, 760, -3, tam=130, seed=3)], nome='carimbos')
+    return Cena([Carimbo('INIMIGO', -1, 1e9, 540, 450, -6, tam=130, seed=1), Carimbo('TRAIDOR', -1, 1e9, 540, 630, 4, tam=130, seed=2), Carimbo('PARASITA', -1, 1e9, 540, 810, -3, tam=130, seed=3)], nome='carimbos')
 CENAS = {'foto_camara': foto_camara, 'numero_121': numero_121, 'carimbos': carimbos}      # urna e martelo desenhados foram descartados pelo usuário (ficaram ruins)
 
 from infograficos import CENAS_INFO

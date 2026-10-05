@@ -49,7 +49,7 @@ class CicloBola:
     @staticmethod
     def _arco(centro, lado, p):
         """arco balístico da bolinha: p = 0 no ponto de pouso, p = 1 no ponto mais longe (a saída percorre de 0 a 1, a chegada de 1 a 0)"""
-        return centro[0] + lado * 430 * p, centro[1] - 300 * math.sin(math.pi * p * 0.85) + 120 * p * p
+        return centro[0] + lado * 430 * p, centro[1] - 120 * math.sin(math.pi * p * 0.85) + 90 * p * p
     def frame(self, fundo, t):
         W, H = self.tam; fr = fundo.copy(); (img_in, c_in), (img_out, c_out) = self._fotos()
         if t < CHEGA:                                   # a bolinha chega pelo mesmo arco da saída, de trás para a frente: apertada, depois normal
@@ -67,3 +67,16 @@ class CicloBola:
             p = v / VAI; est = self._estagios(1); k = min(len(est) - 1, int(p * len(est))); x, y = self._arco(c_out, self.lado_out, p)
             por(fr, est[k], x, y, rot=3 + self.lado_out * 300 * p); return fr
         return fr
+
+
+TOPO_SEGURO = 288          # 15% de 1920. A faixa de cima do quadro é coberta pela interface do Instagram: nada pode entrar nela
+
+def topo_minimo(ciclo, passo=0.15):
+    """menor y (mais alto na tela) ocupado por qualquer peça, incluindo a bolinha em voo e as sombras, ao longo de toda a cena.
+    Devolve (y, t). Serve para garantir que nada invada a faixa de cima (y < TOPO_SEGURO)."""
+    W, H = ciclo.tam; vazio = Image.new('RGBA', (W, H), (0, 0, 0, 0)); pior = (H, 0.0); t = 0.0
+    while t <= ciclo.dur:
+        bb = ciclo.frame(vazio, t).getchannel('A').point(lambda v: 255 if v > 24 else 0).getbbox()
+        if bb and bb[1] < pior[0]: pior = (bb[1], t)
+        t += passo
+    return pior

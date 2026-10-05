@@ -79,7 +79,7 @@ class PrazerNoCerebro:
     """cérebro com uma região que se acende em laranja (prazer). Um sorriso de papel salta de lá"""
     def __init__(self):
         self.nome = 'cérebro'; im = Image.open(os.path.join(RAIZ, 'motion-graphics', 'episodio-teste', 'fotos', 'cerebro.png')).convert('RGBA'); im.thumbnail((700, 560)); self.im = im
-        self.cx, self.cy = 540, 590; self.alvo = (im.width * 0.50, im.height * 0.60)
+        self.cx, self.cy = 540, 625; self.alvo = (im.width * 0.50, im.height * 0.60)
         self.sorriso = sorriso(None); self.sorriso.thumbnail((170, 170)); self.et = Etiqueta('PRAZER', 1.0, 1e9, 250, 790, tam=60, rot=-3, fase=0.8, cor=(255, 226, 60))
     def _brilho(self, k):
         w, h = self.im.size; yy, xx = np.mgrid[0:h, 0:w].astype(np.float32); d = np.sqrt((xx - self.alvo[0]) ** 2 + (yy - self.alvo[1]) ** 2)
@@ -96,7 +96,7 @@ class PrazerNoCerebro:
                 r0, r1 = 62 + 8 * k, 92 + 14 * k; ca, sa_ = math.cos(math.radians(a + 8 * math.sin(t))), math.sin(math.radians(a + 8 * math.sin(t))); d.line([px + r0 * ca, py + r0 * sa_, px + r1 * ca, py + r1 * sa_], fill=(255, 120, 30, 230), width=8)
             fr.alpha_composite(L)
         if t >= 2.4:                                                 # o sorriso salta para fora do cérebro
-            u = t - 2.4; dy = -180 * math.sin(math.pi * clamp(u / 0.7)) if u < 0.7 else 0.0; sc = pop(t, 2.4)
+            u = t - 2.4; dy = -125 * math.sin(math.pi * clamp(u / 0.7)) if u < 0.7 else 0.0; sc = pop(t, 2.4)
             compor(fr, com_escala(self.sorriso, sc), px + 190, py - 110 + dy + 6 * math.sin(t * 2.5), rot=balanco(t, 1.3, 1.0) * 3 + 10, off=8, blur=8, op=0.28)
 
 
@@ -153,7 +153,7 @@ class Ladeira:
                     a = (P + sx - (62 + 26 * k) * math.cos(phi) - off * math.sin(phi), P + sy - (62 + 26 * k) * math.sin(phi) + off * math.cos(phi)); d.line([a, (a[0] - 80 * math.cos(phi), a[1] - 80 * math.sin(phi))], fill=TINTA, width=6)
             compor(L, com_escala(self.rocha, sc), P + sx, P + sy, rot=rot, off=8, blur=8, op=0.30)
         la = np.array(L.getchannel('A')).astype(np.float32); la[~self.inner] = 0; L.putalpha(Image.fromarray(la.astype(np.uint8))); c.alpha_composite(L)
-        compor(fr, c, 540, 580, rot=-1.2 + balanco(t, 0.7, 1.0) * 0.8, off=10, blur=9, op=0.30)
+        compor(fr, c, 540, 610, rot=-1.2 + balanco(t, 0.7, 1.0) * 0.8, off=10, blur=9, op=0.30)
 
 def _cena(pecas): return Cena(pecas)
 CENAS_INFO = {'22c_dor_de_quem_esta_fora': lambda: _cena([DorDeFora()]), '22d_prazer_com_a_dor': lambda: _cena([PrazerNoCerebro()]), '23_terreno_fertil_ladeira': lambda: _cena([Ladeira()])}

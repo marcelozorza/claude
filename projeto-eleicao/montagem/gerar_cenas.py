@@ -5,6 +5,7 @@ import sys, os, shutil, subprocess
 from multiprocessing import Pool
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cena import *
+from bola_cena import topo_minimo, TOPO_SEGURO
 from fundo import fundo
 from cenas_def import CENAS
 _f = None; _c = None; _id = None
@@ -20,6 +21,9 @@ if __name__ == '__main__':
         ks = [int(float(x) * FPS) for x in args[1].split(',')]; pasta = args[2]; os.makedirs(pasta, exist_ok=True)
         with Pool(4, initializer=_init, initargs=(cid,)) as p: p.map(_job, [(k, 0.5, pasta) for k in ks])
         sys.exit()
+    ytopo, ttopo = topo_minimo(CENAS[cid]())
+    print(f'topo mais alto ocupado: y={ytopo} em t={ttopo:.2f} s (limite {TOPO_SEGURO})')
+    if ytopo < TOPO_SEGURO and '--ignorar-topo' not in flags: sys.exit('ERRO: a cena invade a faixa de cima do Instagram. Descer a arte ou usar --ignorar-topo')
     escala = float(args[1]) if len(args) > 1 else 1.0; saida = args[2] if len(args) > 2 else '.'; os.makedirs(saida, exist_ok=True)
     tmp = os.path.join(os.environ.get('ELEICAO_TRAB', '/home/user/trabalho'), 'quadros_' + cid); shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
     N = int(DUR * FPS)
