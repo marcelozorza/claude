@@ -1,0 +1,74 @@
+DECUPAGEM: VÍDEO DA ELEIÇÃO (PRIMEIRO TURNO 2026)  [versão editada pelo usuário, é a referência oficial]
+============================================================
+
+Regra do usuário: a cada 5 s muda algo na tela. Frases com menos de 5 s se juntam à seguinte. Frases longas ganham uma troca no meio.
+Campo em branco: nada entra na tela naquele campo. "continua anterior" e "repete": mantém a peça ou o título anterior.
+[G] motion graphics  [V] vídeo de apoio  [F] foto do Wikimedia Commons  [T] título  "logo nada errado" = logo do canal
+
+1. ABERTURA
+1a  Se você acordou assustado com o resultado do primeiro turno, esse vídeo é pra você. | [V] pessoa acordando e olhando o celular de manhã | "1º turno" (etiqueta pequena)
+1b  E se você acordou comemorando, talvez seja ainda mais. | [V] pessoa sorrindo para o celular, mesmo enquadramento do 1a | nenhum
+1c  O partido de Bolsonaro elegeu 121 deputados federais. É a maior bancada que um único partido já teve na Câmara desde a Constituição de 1988. | [F] Plenário da Câmara, depois [F] promulgação da Constituição de 1988 | "121" gigante em tira de papel, com "deputados federais" menor
+1d  Vinte e dois deputados a mais do que há quatro anos. (junta com 1c) | [G] barra limpa 99 sobe para 121, etiqueta "+22" | "+22"
+2   No Senado, elegeu 19 senadores e vai ocupar 28 das 81 cadeiras. Também a maior bancada da Casa. | [F] Plenário do Senado, depois [G] grade de 81 quadradinhos, 28 viram amarelos | "28 de 81"
+3   E o candidato do partido à Presidência terminou o primeiro turno na frente, contrariando as pesquisas. | [F] urna eletrônica, [G] papel "pesquisas" amassado e jogado fora | "contra as pesquisas"
+4   A extrema direita brasileira nunca teve tanto espaço no lugar onde se fazem as leis. | [V] ou [F] Congresso Nacional, zoom lento na fachada | "onde se fazem as leis"
+
+2. A TESE
+5a  Não é preciso mais evidências de que o objetivo deste grupo é usar a política para romper com a política. | [V] Esplanada dos Ministérios, plano aberto | citação em tira: "usar a política para romper com a política" (caneta passa uma vez)
+6a  Eles disputam eleição, ocupam cadeiras, fazem leis. | [G] três adesivos caem em sequência: urna, cadeira, martelo | nenhum
+6b  Mas trabalham para que as pessoas entendam cada vez menos o que é política e o que é democracia. | [G] duas tiras "política" e "democracia" viram bola de papel e são jogadas fora | nenhum
+7a  E o que tem a ver com este canal? (junta com 7b) | [G] logo do canal jogado sobre o papel (cena que já existe) | nenhum
+7b  É porque a ferramenta central no trabalho da extrema direita é ensinar as pessoas a sentir vergonha da própria empatia. | [V] pessoa de cabeça baixa | "vergonha da própria empatia"
+
+3. O QUE É POLÍTICA
+8   Pra entender isso, eu preciso voltar um pouco e falar do que é política. | (sem peça) | cartão de capítulo: "O que é política?"
+9a  O cientista político britânico Bernard Crick deu uma definição simples e elegante em 1962: | [V] biblioteca, páginas de livro antigo, ou plaqueta de papel | cartão de capítulo "O que é política?" (permanece o anterior)
+9b  política é a forma pacífica de uma sociedade lidar com interesses diferentes. | (sem peça) | citação em tira: "a forma pacífica de lidar com interesses diferentes"
+9c  Em vez de resolver no tapa, a gente negocia, vota, perde, ganha, tenta de novo. | repete título anterior
+10a Para isso funcionar, existe uma condição básica. | [V] multidão diversa caminhando, vista de cima | nenhum
+10b Eu preciso reconhecer que você existe, que você é gente e que você tem o direito de querer outra coisa. | continua [V] multidão, rostos | "Você é gente"
+
+4. MÜLLER E A NEGAÇÃO DO OUTRO
+11a O filósofo alemão Jan-Werner Müller mostrou que o traço central desses movimentos é justamente negar isso. | logo nada errado
+11b Eles dizem que só eles representam o povo verdadeiro. | (sem peça) | "o povo verdadeiro"
+11c Quem discorda vira inimigo, traidor, parasita. (junta com 12) | [G] três carimbos batem nos bonecos de fora: INIMIGO, TRAIDOR, PARASITA | os três carimbos
+12  Quando você tira a humanidade do outro, a negociação acaba. | [G] aperto de mão de papel que se rasga ao meio
+
+5. MUSK E A EMPATIA
+13a Em fevereiro de 2025, o homem mais rico do mundo sentou no maior podcast do planeta | [F] Elon Musk em recorte de papel, [G] microfone adesivo
+13b e disse uma frase que ressoa e cresce desde então. | [V] estúdio de podcast, microfone em close | nenhum
+14  Elon Musk disse a Joe Rogan que a fraqueza fundamental da civilização ocidental é a empatia. | [F] Musk e Rogan lado a lado em recortes | citação em tira: "a fraqueza fundamental da civilização ocidental é a empatia"
+15a Ele falou em "empatia suicida". (junta com 15b) | [G] palavras em tira grande | "empatia suicida"
+15b Disse que estavam explorando um defeito da civilização, que seria a nossa reação empática. | continua anterior
+16a O exemplo que ele deu foi um programa da Califórnia que oferece plano de saúde | continua anterior
+16b a imigrantes pobres sem documentos. | [V] pessoas em sala de espera de clínica | nenhum
+17  Ou seja, a ameaça à civilização seria deixar gente pobre ser atendida no médico. | [V] enfermeira atendendo paciente, carimbo vermelho "AMEAÇA À CIVILIZAÇÃO" bate por cima | o carimbo
+
+6. A MÚSICA BRASILEIRA
+18  Aqui no Brasil, a gente conhece essa música há muito mais tempo com outra letra: | logo nada errado
+19a "Direitos humanos para humanos direitos." | [G] tira com a frase, caneta passa uma vez | a frase
+19b "Bandido bom é bandido morto." | [G] segunda tira cai sobre a primeira | a frase
+19c Repara no que essas frases fazem. (junta com 20) | logo nada errado
+20  Nenhuma delas manda você deixar de sentir. Elas mandam você escolher por quem sente. | logo nada errado
+21a O cidadão de bem merece pena. O marginalizado, a morte. | (sem peça) | "morte"
+
+7. A CIÊNCIA DA EMPATIA TORTA
+21b A ciência ajuda a entender por que isso funciona tão bem. | [G] cérebro adesivo | "A ciência" (cartão de capítulo)
+22a A empatia já nasce torta. (junta com 22b) | [G] coração adesivo torto, balançando fora do eixo | "já nasce torta"
+22b A neurocientista Mina Cikara descreveu, em 2011, o que chamaram de lacuna de empatia entre grupos. | (sem peça) | "lacuna de empatia entre grupos"
+22c A gente sente menos a dor de quem considera de fora. | [G] dois círculos de bonecos, coração grande no de dentro, coração pequeno no de fora | nenhum
+22d E, às vezes, sente até prazer com a dor do outro. | [G] coração do círculo de fora vira um sorriso | "prazer com a dor do outro"
+23a Ou seja, o terreno já é fértil. (junta com 23b) | continua anterior
+23b Quem quer estreitar a empatia não precisa criar nada. Só precisa empurrar ladeira abaixo. | continua anterior
+23c E quem faz isso sistematicamente à luz do dia não pode participar do processo democrático. | [G] tira de citação | "não pode participar do processo democrático"
+
+8. FECHO
+24a Como resolver isso? Não faço ideia. (junta com 24b) | [G] ponto de interrogação grande de papel | nenhum
+24b Mas é preciso definir um limite e não vejo um dia melhor que hoje. | [G] traço vermelho de marca-texto riscando a tela de ponta a ponta, folha de calendário "HOJE" | "um limite"
+25a O que eu estou defendendo não é um lado. É uma regra mínima de convivência. | repete anterior
+25b A de que todo mundo é gente. | [G] bonecos de papel de vários tons dados as mãos em fila | "Todo mundo é gente" (grande)
+26a E se concordamos que todo mundo é gente, a extrema direita não poderia escrever leis nem governar. | [F] Congresso Nacional (volta da cena 4) | nenhum
+26b Mereciam consultas compulsórias com psicólogos e psiquiatras. | [G] prancheta adesivo (a que já existe)
+27a A empatia não é o defeito da civilização. | [G] a citação do Musk riscada com X vermelho | nenhum
+27b Ela é o que permitiu que existisse uma civilização. | logo nada errado
