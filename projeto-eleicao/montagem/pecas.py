@@ -113,7 +113,8 @@ class Cutout:
     def draw(self, fr, t):
         if t < self.t0 or t > self.t1 + 0.36: return
         u = t - self.t0; dy = 0.0; er = 0.0; sc = 1.0; dx = 0.0
-        if self.modo == 'cai': dy = queda(u); er = 0 if u > 0.3 else -8 * (1 - u / 0.3)
+        if self.modo == 'fixo': pass                      # cena padrão: a peça já está pronta, só balança
+        elif self.modo == 'cai': dy = queda(u); er = 0 if u > 0.3 else -8 * (1 - u / 0.3)
         elif self.modo == 'pop': sc = 0.3 + 0.7 * back(clamp(u / 0.22))
         elif self.modo == 'joga':
             if u < 0.42: p = u / 0.42; dy = -1000 * (1 - p ** 1.8); dx = 260 * (1 - p); er = 520 * (1 - p)
@@ -185,13 +186,11 @@ def d_urna(d, S, P):
 def f_martelo(d, S, P):
     X = lambda v: (v + P) * S
     d.polygon([(X(x), X(y)) for x, y in rot_ret(170, 90, 200, 84, -28)], fill=255); d.polygon([(X(x), X(y)) for x, y in rot_ret(220, 175, 36, 230, -28 + 0)], fill=255)
-    d.polygon([(X(x), X(y)) for x, y in rot_ret(140, 270, 230, 30, 0)], fill=255)
 def d_martelo(d, S, P):
     X = lambda v: (v + P) * S
     d.polygon([(X(x), X(y)) for x, y in rot_ret(220, 175, 36, 230, -28)], fill=(176, 120, 72, 255), outline=TINTA)
     d.polygon([(X(x), X(y)) for x, y in rot_ret(170, 90, 200, 84, -28)], fill=(150, 98, 60, 255), outline=TINTA, width=3 * S)
     for off in (-72, 72): d.polygon([(X(x), X(y)) for x, y in rot_ret(170 + off * math.cos(math.radians(-28)), 90 + off * math.sin(math.radians(-28)), 18, 88, -28)], fill=(96, 62, 38, 255))
-    d.polygon([(X(x), X(y)) for x, y in rot_ret(140, 270, 230, 30, 0)], fill=(176, 120, 72, 255), outline=TINTA, width=3 * S)
 
 def f_mic(d, S, P):
     X = lambda v: (v + P) * S

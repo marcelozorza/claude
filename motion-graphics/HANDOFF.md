@@ -8,6 +8,12 @@ reutilizáveis** na estética da marca: papel quadriculado creme, recortes de pa
 Ele monta tudo manualmente. Não montar o vídeo inteiro nem entregar apresentador, legenda ou áudio, salvo pedido explícito.
 
 ## Regras do usuário
+- ESTRUTURA PADRÃO DE CENA (6 de outubro, regra do usuário, vale para todas as animações):
+  * Só código (Python/PIL). Nunca modelo de vídeo de IA. Ideias úteis do material Vox foram integradas ao kit, não a estética Vox. Folha guia mestra: projeto-eleicao/folha_guia_mestra.png (gerada por montagem/guia_mestra.py).
+  * Um arquivo por cena, fechado em si, sobre o papel pautado. Nada de outra cena na tela durante a abertura ou o fechamento. Nunca o logo ou outra peça por cima de uma cena.
+  * Sequência: a bolinha de papel chega (0,45 s), abre (0,55 s), ARTE FIXA POR SEMPRE 10 s com balanço leve (nunca parada), fecha em bolinha (0,55 s) e vai embora (0,50 s), mais 0,1 s de folga. Total 12,15 s. A duração dos 10 s não varia com o tamanho da arte.
+  * Sempre gerar a mais. O usuário corta o excesso na edição e nunca estica.
+  * Código: projeto-eleicao/montagem/cena.py (estrutura), cenas_def.py (definição das cenas), gerar_cenas.py (render, um MP4 por cena, 1080x1920, sem áudio). Peças com modo 'fixo' em Cutout. Escala 0.5 para conferência.
 - REGRA DEFINITIVA (6 de outubro): nunca mais gerar o vídeo inteiro montado. Gerar somente CENAS em arquivos separados, só o que vai atrás do apresentador (fundo, peças, vídeos de apoio), com o tempo de cada cena indicado no nome ou em lista. O usuário monta tudo sozinho no editor. Não montar, não sobrepor o apresentador, não entregar prévia do vídeo completo. A tentativa de montagem inteira não funciona para este tipo de vídeo e foi abandonada.
 - Responder em português. Tom direto, formal, sóbrio. Sem travessão, sem ponto e vírgula, sem a fórmula "não é X, é Y".
 - Confirmar antes de gastar créditos (Magnific, por exemplo) e informar o custo.
