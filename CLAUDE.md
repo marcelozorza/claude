@@ -8,3 +8,4 @@ papel quadriculado ou título na tela, o assunto é o projeto em `motion-graphic
 3. Siga as regras de estilo e de tom do HANDOFF (português, direto e sóbrio, sem travessão nem ponto e vírgula, confirmar antes de gastar créditos).
 4. Trabalhe na branch `claude/video-chroma-key-edit-epik78`. Ao aprovar cada peça, atualize o HANDOFF e faça commit e push.
 5. Abra com uma frase curta dizendo o que está aprovado e perguntando qual peça vem agora.
+6. **Nunca entregar arquivo Markdown (.md) ao usuário.** Documentos de leitura vão em .docx ou .txt puro (o usuário lê no celular). Markdown só para arquivos internos do repositório, como o HANDOFF.
