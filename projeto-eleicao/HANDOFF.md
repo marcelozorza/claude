@@ -3,6 +3,9 @@
 Documento interno. Não entregar ao usuário como arquivo de leitura (regra: nunca .md, só .docx ou .txt).
 
 ## Regras do usuário
+- BOLA APROVADA (6 de outubro): o desenho final da bola (bola.py, bola_realista) foi aprovado pelo usuário. Não mexer mais: placas grandes e irregulares com tons bem diferentes, branco neutro, SEM linhas pretas finas. A bola do simulador de dobras troca para ela com corte seco aos 93% do fechamento.
+- NÃO DESENHAR OBJETOS (6 de outubro): urna e martelo desenhados ficaram ruins e foram descartados, e os infográficos desenhados ficaram sem sentido. Preferir fotos reais licenciadas, formas simples de papel (tiras, círculos, setas, carimbos) e tipografia. Estética papercraft (colagem de tiras e recortes de papel colorido em camadas) pode entrar aos poucos, só com formas geométricas simples.
+- PROCESSO (6 de outubro): ir mais devagar. Gerar de 1 a 3 cenas por vez, cada uma em arquivo próprio, com o NÚMERO DA CENA DA DECUPAGEM no nome (ex.: cena_01c_...). O usuário revisa e corrige cada uma separado. Sempre dizer o número da cena ao entregar. Na montagem anterior ele se perdeu nos números e cortou muita coisa.
 - ESTRUTURA PADRÃO DE CENA (6 de outubro, regra do usuário, vale para todas as animações):
   * Só código (Python/PIL). Nunca modelo de vídeo de IA. Ideias úteis do material Vox foram integradas ao kit, não a estética Vox.
   * Um arquivo por cena, fechado em si, sobre o papel pautado. Nada de outra cena na tela durante a abertura ou o fechamento. Nunca o logo ou outra peça por cima de uma cena.

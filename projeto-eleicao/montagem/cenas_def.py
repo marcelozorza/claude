@@ -17,4 +17,4 @@ def numero_121():
     return Cena([Cutout(tira_texto('121', 230, seed=3, padx=120), cx=540, cy=520, rot=-2, fase=0.4, nome='121', **K), Etiqueta('deputados federais', -1, 1e9, 640, 700, tam=56, rot=3, fase=1.2)], nome='número')
 def carimbos():
     return Cena([Carimbo('INIMIGO', -1, 1e9, 540, 400, -6, tam=130, seed=1), Carimbo('TRAIDOR', -1, 1e9, 540, 580, 4, tam=130, seed=2), Carimbo('PARASITA', -1, 1e9, 540, 760, -3, tam=130, seed=3)], nome='carimbos')
-CENAS = {'6a_urna_cadeira_martelo': adesivos_6a, 'foto_camara': foto_camara, 'numero_121': numero_121, 'carimbos': carimbos}
+CENAS = {'foto_camara': foto_camara, 'numero_121': numero_121, 'carimbos': carimbos}      # urna e martelo desenhados foram descartados pelo usuário (ficaram ruins)

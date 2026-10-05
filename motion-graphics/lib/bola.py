@@ -82,10 +82,10 @@ def _extensao(pilha, n, centro):
 
 
 class BolaPapel:
-    def __init__(self, img, modo='A', seed=3, n_fac=70, forca=1.0, irr=1.0):
+    def __init__(self, img, modo='A', seed=3, n_fac=70, forca=1.0, irr=1.0, realista=False):
         """n_fac: quantidade de placas do amassado, forca: intensidade dos vincos, irr: irregularidade da silhueta (1 = bola padrão).
         Valores maiores dão uma bola mais amassada. Use junto com estagios_amassados()."""
-        self.forca, self.irr = forca, irr
+        self.forca, self.irr, self.realista, self.seed, self.n_fac = forca, irr, realista, seed, n_fac
         self.img = img.convert('RGBA')
         self.W, self.H = self.img.size
         self.tex = np.array(self.img).astype(np.float32)
@@ -111,9 +111,18 @@ class BolaPapel:
             phi += passo + rng.uniform(-jit, jit)
         self.N = len(self.dobras)
         # sombreamento de amassado (placas e vincos, bem suaves)
-        from papel import _facetas
+        from papel import _facetas, _amassado
         F, B = _facetas(self.H, self.W, seed + 40, n=n_fac)
         self.F = ndi.gaussian_filter(F, 4); self.B = ndi.gaussian_filter(B, 1.6)
+        if realista:
+            # amassado realista (referência: bola de papel real). Poucas placas grandes com degradê suave, arestas nítidas, vincos de força variável
+            # com sombra macia ao lado, micro-vincos discretos e grão. n_fac maior = mais amassada (mais placas, menores).
+            Lg, Bg = _amassado(self.H, self.W, seed + 40, max(10, n_fac // 4), 0.22, 0.7); Lf, Bf = _amassado(self.H, self.W, seed + 90, max(30, int(n_fac * 1.1)), 0.10, 0.4)
+            self.F = Lg + 0.40 * Lf                                                                       # luz por placa
+            self.Bh = np.maximum(Bg, 0.45 * Bf)                                                           # arestas
+            self.B = ndi.shift(ndi.gaussian_filter(self.Bh, 2.6), (3.0, 3.0), order=1) * 2.0              # sombra macia do lado oposto à luz
+            self.R = ndi.shift(self.Bh, (-2.5, -2.5), order=1) - self.Bh                                  # aresta clara do lado da luz
+            self.G = ndi.gaussian_filter(rng.randn(self.H, self.W), 0.8)                                  # grão da fibra do papel
         self.var = rng.uniform(-0.02, 0.02, 200)
         from papel import _ruido
         self.dx = (ndi.gaussian_filter(_ruido((self.H, self.W), 90, seed + 70), 3) - 0.5) * 2
@@ -121,7 +130,7 @@ class BolaPapel:
         self._cache = {}
 
     # ---------------------------------------------------------------- desenho de uma pilha
-    def _desenha(self, pilha, apaga_foto=0.0, vinco=1.0):
+    def _desenha(self, pilha, apaga_foto=0.0, vinco=1.0, plano=False):
         H, W = self.H, self.W
         out = np.zeros((H, W, 4), np.float32)
         D = np.zeros((H, W), np.float32)          # sombra já aplicada (não acumula entre dezenas de pedaços)
@@ -147,7 +156,7 @@ class BolaPapel:
             else:
                 rgb = np.broadcast_to(PAPEL, (h, w, 3)).copy()
                 rgb += (np.random.RandomState(idx).randn(h, w, 1) * 1.6)
-            lum = pc.luz * (1 + self.var[idx % 200])
+            lum = 1.0 if plano else pc.luz * (1 + self.var[idx % 200])
             rgb = rgb * lum
             reg = out[y0:y1, x0:x1]
             # sombra projetada sobre o que está embaixo
@@ -161,16 +170,25 @@ class BolaPapel:
                 D[y0:y1, x0:x1] = nd
             # contorno (vinco) do pedaço
             borda = m - ndi.grey_erosion(m, size=(3, 3))
-            rgb = rgb * (1 - 0.14 * vinco * np.clip(borda * 2, 0, 1))[..., None]
+            rgb = rgb * (1 - (0.04 if self.realista else 0.14) * vinco * np.clip(borda * 2, 0, 1))[..., None]
             ra = reg[..., 3:4]
             reg[..., :3] = reg[..., :3] * (1 - a[..., None]) + rgb * a[..., None]
             reg[..., 3:4] = ra + a[..., None] * (1 - ra)
             D[y0:y1, x0:x1] *= (1 - a)
+        if plano: out[..., :3] = PAPEL                      # bola pronta: cor chapada de papel, sem costuras entre os pedaços dobrados
         return out
 
     # ---------------------------------------------------------------- quadro
     def quadro(self, c, bola_a=0.78):
-        """c de 0 (aberto) a 1 (bola)"""
+        """c de 0 (aberto) a 1 (bola). No modo realista, nos últimos quadros a bola do simulador de dobras dá lugar à bola desenhada por bola_realista."""
+        res = self._quadro_dobras(c, bola_a)
+        if not self.realista or c < 0.93: return res
+        if getattr(self, '_final', None) is None:
+            ref = self._quadro_dobras(1.0, bola_a); area = float((np.array(ref.getchannel('A')) > 128).sum()); R = math.sqrt(area / math.pi)
+            self._final = bola_realista(R, (self.H, self.W), (self.cx, self.cy), seed=self.seed, n_fac=self.n_fac, irr=self.irr, forca=self.forca)
+        return self._final if c >= 0.93 else res                       # troca seca (stop motion) para a bola desenhada, sem sobreposição fantasma
+
+    def _quadro_dobras(self, c, bola_a=0.78):
         c = max(0.0, min(1.0, c))
         k = (c, )
         if c <= 1e-4: return self.img.copy()
@@ -179,7 +197,7 @@ class BolaPapel:
         i = min(self.N - 1, int(u)); p = u - i
         pilha = self.estados[i]
         af = max(0.0, min(1.0, (c - 0.93) / 0.05)) if c < 1 else 1.0
-        if cd >= 1.0: out = self._desenha(self.estados[self.N], af)
+        if cd >= 1.0: out = self._desenha(self.estados[self.N], af, vinco=0.0 if self.realista else 1.0, plano=self.realista)
         else:
             pe = p * p * (3 - 2 * p)                    # ease dentro de cada dobra
             n, d = self.dobras[i]
@@ -202,7 +220,8 @@ class BolaPapel:
         H, W = self.H, self.W
         prog = min(1.0, c / bola_a)
         k = prog ** 1.2
-        sh = 1 + k * self.forca * (0.045 * np.clip(self.F, -1.5, 1.5) - 0.085 * self.B)     # placas e vincos do amassado
+        if self.realista: sh = 1 + k * self.forca * (0.14 * np.clip(self.F, -0.8, 0.8) - 0.14 * self.B + 0.08 * np.clip(self.R, -1, 1))
+        else: sh = 1 + k * self.forca * (0.045 * np.clip(self.F, -1.5, 1.5) - 0.085 * self.B)     # placas e vincos do amassado
         out[..., :3] *= sh[..., None]
         q = max(0.0, (c - bola_a) / (1 - bola_a))
         if q <= 0:
@@ -221,7 +240,10 @@ class BolaPapel:
         out = np.stack([ndi.map_coordinates(out[..., k_], [sy, sx], order=1, mode='constant', cval=0) for k_ in range(4)], -1)
         # 2) o que passa do círculo é dobrado para dentro (cortado) e o círculo se completa com papel
         ang = np.arctan2(yy - cy, xx - cx)
-        irr = 1 + self.irr * (0.045 * np.sin(5 * ang + 1.3) + 0.03 * np.sin(8 * ang + 0.4) + 0.02 * np.sin(13 * ang)) + max(0.0, self.irr - 1) * (0.012 * np.sin(21 * ang + 0.7) + 0.008 * np.sin(34 * ang + 2.1))
+        if self.realista:                                                                      # silhueta poligonal, de cantos vivos
+            rs = np.random.RandomState(self.seed * 7 + 5); K = 9; ak = np.sort(np.linspace(0, 2 * math.pi, K, endpoint=False) + rs.uniform(-0.18, 0.18, K))
+            rk = 1 + (0.10 + 0.05 * (self.irr - 1)) * rs.uniform(-1, 1, K); irr = np.interp(ang, ak, rk, period=2 * math.pi)
+        else: irr = 1 + self.irr * (0.045 * np.sin(5 * ang + 1.3) + 0.03 * np.sin(8 * ang + 0.4) + 0.02 * np.sin(13 * ang)) + max(0.0, self.irr - 1) * (0.012 * np.sin(21 * ang + 0.7) + 0.008 * np.sin(34 * ang + 2.1))
         borda = R * 0.98 * irr
         disco = np.clip((borda - dist) / 1.8 + 0.5, 0, 1)
         permitido = np.clip((borda * (1 + 0.9 * (1 - q) ** 1.5) - dist) / 1.8 + 0.5, 0, 1)
@@ -230,19 +252,47 @@ class BolaPapel:
         rr = np.clip(np.sqrt(nx * nx + ny * ny), 0, 1)
         nz = np.sqrt(np.clip(1 - rr * rr, 0, 1))
         lamb = np.clip(-0.45 * nx - 0.55 * ny + 0.75 * nz, 0, 1)
-        esf = 1 - q * (1 - (0.60 + 0.46 * lamb))
-        crum = 1 + q * self.forca * (0.10 * np.clip(self.F, -1.5, 1.5) - 0.22 * self.B)
+        if self.realista:
+            esf = 1 - q * (1 - (0.86 + 0.18 * lamb)) - q * 0.07 * rr ** 4                  # luz clara e borda só levemente escurecida
+            crum = 1 + q * self.forca * (0.16 * np.clip(self.F, -0.8, 0.8) - 0.15 * self.B - 0.07 * self.Bh + 0.10 * np.clip(self.R, -1, 1)) + 0.012 * self.G
+        else:
+            esf = 1 - q * (1 - (0.60 + 0.46 * lamb))
+            crum = 1 + q * self.forca * (0.10 * np.clip(self.F, -1.5, 1.5) - 0.22 * self.B)
         papel = PAPEL[None, None, :] * (1 + 0.05 * np.clip(self.F, -1.5, 1.5) - 0.10 * self.B)[..., None]
         fora = np.clip(1 - out[..., 3:4], 0, 1)
         out[..., :3] = out[..., :3] * (1 - fora) + papel * fora
         out[..., :3] = np.where((a[..., None] > 0.02), out[..., :3], 0)
-        out[..., :3] *= (esf * crum)[..., None]
+        if self.realista:                                                                     # papel creme quente, sombras em marrom claro (nunca cinza)
+            sv = (esf * crum)[..., None]; w = np.clip((1 - sv) / 0.55, 0, 1)
+            out[..., :3] = out[..., :3] * sv                                  # sombras neutras, como na bola desenhada
+        else: out[..., :3] *= (esf * crum)[..., None]
         # 3) leva a bola para o centro do quadro
         dx, dy = (self.cx - cx) * q ** 1.4, (self.cy - cy) * q ** 1.4
         res = np.dstack([np.clip(out[..., :3], 0, 255), a * 255]).astype(np.uint8)
         im = Image.fromarray(res, 'RGBA')
         return im.transform(im.size, Image.AFFINE, (1, 0, -dx, 0, 1, -dy), resample=Image.BILINEAR)
 
+
+def bola_realista(R, tam, centro, seed=3, n_fac=70, irr=1.0, forca=1.0):
+    """Desenha uma bola de papel amassado pronta (RGBA), do zero, para ficar parecida com uma bola de papel de verdade:
+    silhueta poligonal de cantos vivos, placas planas com tons suaves, vincos de força variável com sombra macia do lado oposto à luz,
+    aresta clara do lado da luz, cor de papel creme quente (as sombras vão para marrom claro, nunca cinza) e grão de fibra.
+    R = raio em pixels, tam = (altura, largura) da imagem, centro = (cx, cy). n_fac maior e irr maior = mais amassada."""
+    from papel import _amassado
+    H, W = tam; cx, cy = centro
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32); X, Y = xx - cx, yy - cy; dist = np.sqrt(X * X + Y * Y); ang = np.arctan2(Y, X)
+    rs = np.random.RandomState(seed * 7 + 5); K = 9 + int(round(3 * (irr - 1) / 0.45)); ak = np.sort(np.linspace(0, 2 * math.pi, K, endpoint=False) + rs.uniform(-0.18, 0.18, K))
+    rk = 1 + (0.09 + 0.05 * (irr - 1)) * rs.uniform(-1, 1, K); prof = np.interp(ang, ak, rk, period=2 * math.pi)
+    Rb = R * prof * 0.98; alfa = np.clip((Rb - dist) / 1.4 + 0.5, 0, 1); rho = np.clip(dist / Rb, 0, 1)
+    nxs, nys = X / Rb, Y / Rb; nzs = np.sqrt(np.clip(1 - rho ** 2, 0, 1)); lamb = np.clip(-0.45 * nxs - 0.55 * nys + 0.75 * nzs, 0, 1)
+    area = H * W / (math.pi * R * R); nc = int(max(6, n_fac // 8) * area)                   # placas contadas dentro da bola, não na imagem toda
+    Lg, Bg = _amassado(H, W, seed + 40, nc, 0.36, 1.0, 1.15, 0.14); Lf, Bf = _amassado(H, W, seed + 90, int(max(30, n_fac * 0.9) * area), 0.12, 0.4)
+    luz = ndi.gaussian_filter(Lg + 0.20 * Lf, 1.3)                                          # placas planas de tons bem marcados, arestas nítidas
+    Bsoft = ndi.gaussian_filter(Bg, 2.6) * 3.0                                                    # só uma sombra macia onde as placas se encontram, sem linhas pretas finas
+    G = ndi.gaussian_filter(rs.randn(H, W), 0.8)
+    s_ = 0.82 + 0.26 * lamb + forca * (0.52 * np.clip(luz, -0.9, 0.9) - 0.08 * np.clip(Bsoft, 0, 1.4)) - 0.08 * rho ** 3 + 0.012 * G
+    rgb = np.array([246, 241, 230], np.float32) * np.clip(s_, 0.30, 1.12)[..., None]          # papel branco levemente quente, sombras neutras
+    return Image.fromarray(np.dstack([np.clip(rgb, 0, 255), alfa * 255]).astype(np.uint8), 'RGBA')
 
 def _caixa(im, margem=6):
     bb = im.getchannel('A').point(lambda v: 255 if v > 8 else 0).getbbox() or (0, 0, im.width, im.height)
@@ -257,6 +307,6 @@ def estagios_amassados(bola, n=2, seed=11, reducao=0.72):
     for k in range(1, n + 1):
         prev = out[-1]; e = 2.5 * reducao
         base = prev.resize((int(prev.width * e), int(prev.height * e)), Image.LANCZOS)
-        b = BolaPapel(base, 'A', seed=seed + 12 * k, n_fac=70 + 55 * k, forca=1.0 + 0.30 * k, irr=1.0 + 0.45 * k)
+        b = BolaPapel(base, 'A', seed=seed + 12 * k, n_fac=70 + 55 * k, forca=1.0 + 0.30 * k, irr=1.0 + 0.45 * k, realista=True)
         out.append(_caixa(b.quadro(1.0)))
     return out

@@ -1,4 +1,5 @@
 """Recorte de jornal e animação de bola de papel (desenrola / enrola)."""
+import math
 import numpy as np
 from PIL import Image, ImageFilter
 from scipy import ndimage as ndi
@@ -25,6 +26,31 @@ def _facetas(H, W, seed, n=110):
     return F, B
 
 PAPEL = np.array([246, 241, 230], float)
+
+_cache_a = {}
+def _amassado(H, W, seed, n, tilt=0.30, grad=0.9, alonga=1.0, grad_k=0.10):
+    """campos de um papel amassado de verdade. Cada placa (célula de Voronoi) é um plano inclinado, com degradê suave dentro dela (iluminação
+    direcional) e arestas definidas entre placas. O vinco escurece conforme o ÂNGULO entre as placas vizinhas.
+    Devolve (luz, vinco): luz em torno de 0 (placa voltada para a luz > 0), vinco 0..1."""
+    k = (H, W, seed, n, tilt, grad, alonga, grad_k)
+    if k in _cache_a: return _cache_a[k]
+    r = np.random.RandomState(seed)
+    pts = np.c_[r.rand(n) * W, r.rand(n) * H]; nx, ny = r.randn(n) * tilt, r.randn(n) * tilt; gx, gy = r.randn(n) * grad, r.randn(n) * grad
+    yy, xx = np.mgrid[0:H:2, 0:W:2]; q = np.c_[xx.ravel(), yy.ravel()].astype(float)
+    if alonga != 1.0:                                                               # placas alongadas numa direção (vincos mais longos)
+        t_ = r.uniform(0, math.pi); A = np.array([[math.cos(t_), math.sin(t_)], [-math.sin(t_), math.cos(t_)]]) * np.array([[alonga], [1.0]])
+        d, idx = cKDTree(pts @ A.T).query(q @ A.T, k=2)
+    else: d, idx = cKDTree(pts).query(q, k=2)
+    a, b = idx[:, 0], idx[:, 1]
+    L = np.array([-0.45, -0.55, 0.70]); L = L / np.linalg.norm(L)
+    n3 = np.stack([-nx[a], -ny[a], np.ones(len(a))], 1); n3 /= np.linalg.norm(n3, axis=1, keepdims=True)
+    esc = max(H, W) / 6.0                                                           # o degradê dentro da placa acompanha o tamanho dela
+    px, py = q[:, 0] - pts[a, 0], q[:, 1] - pts[a, 1]
+    luz = (n3 @ L) / L[2] - 1.0 + grad_k * (gx[a] * px + gy[a] * py) / esc
+    delta = np.sqrt((nx[a] - nx[b]) ** 2 + (ny[a] - ny[b]) ** 2)                      # ângulo entre as placas vizinhas
+    borda = (1 - np.clip((d[:, 1] - d[:, 0]) / 3.0, 0, 1)) * np.clip(delta / (1.4 * tilt), 0, 1.3)
+    up = lambda v: np.kron(v.reshape(xx.shape), np.ones((2, 2)))[:H, :W]
+    res = (up(luz), np.clip(ndi.gaussian_filter(up(borda), 1.1), 0, 1.3)); _cache_a[k] = res; return res
 
 def _ruido(shape, escala, seed):
     r = np.random.RandomState(seed)

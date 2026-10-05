@@ -13,7 +13,7 @@ _cache = {}
 def _bola(item, modo):
     from bola import BolaPapel
     k = (id(item), modo)
-    if k not in _cache: _cache[k] = (item, BolaPapel(item, modo, seed=3 if modo == 'A' else 5))   # guarda o item para o id não ser reaproveitado
+    if k not in _cache: _cache[k] = (item, BolaPapel(item, modo, seed=3 if modo == 'A' else 5, realista=True))   # guarda o item para o id não ser reaproveitado
     return _cache[k][1]
 def ease_io(u): return u * u * (3 - 2 * u)
 def balanco(t, fase=3.0, fase2=1.0):
