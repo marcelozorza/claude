@@ -9,3 +9,6 @@ papel quadriculado ou título na tela, o assunto é o projeto em `motion-graphic
 4. Trabalhe na branch `claude/video-chroma-key-edit-epik78`. Ao aprovar cada peça, atualize o HANDOFF e faça commit e push.
 5. Abra com uma frase curta dizendo o que está aprovado e perguntando qual peça vem agora.
 6. **Nunca entregar arquivo Markdown (.md) ao usuário.** Documentos de leitura vão em .docx ou .txt puro (o usuário lê no celular). Markdown só para arquivos internos do repositório, como o HANDOFF.
+
+## Projeto "eleição" (vídeo do roteiro sobre eleição e empatia)
+Se o assunto for o vídeo da eleição, brutoempatia, crop no umbigo ou `projeto-eleicao/`, leia `projeto-eleicao/HANDOFF.md` antes de qualquer coisa. Use a branch indicada pelo prompt da sessão. A regra 6 (nunca entregar .md) vale para todos os projetos.

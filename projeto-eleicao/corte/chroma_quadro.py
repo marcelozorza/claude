@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 import numpy as np
 from PIL import Image
 from chroma import key_robusto, grade, limpa_pretos
-CORTE_Y = 1550          # linha da cintura: abaixo dela há uma peça escura que não faz parte da figura
+CORTE_Y = 1190          # linha do umbigo (pedido do usuário). Cintura em 1550 era errado. Abaixo daqui a figura é cortada
 COR = (0.26, 0.26, 0.26)  # temperatura, matiz, saturação aprovados
 def processa(a):
     """a: HxWx3 uint8 do bruto. Devolve HxWx4 uint8 com a figura recortada, limpa e com a cor aprovada."""
