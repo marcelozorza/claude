@@ -1,7 +1,8 @@
 """Ciclo da bolinha de papel, reutilizável em qualquer animação (guardado no kit).
 
-    bolinha chega (0,45 s) -> abre (0,55 s) -> ARTE FIXA 10 s, com o balanço que as peças já têm -> fecha em bolinha (0,55 s)
-    -> a bolinha vai embora (0,75 s): cada vez MENOR e MAIS AMASSADA, em desenhos novos (não é redimensionamento), e some.
+    bolinha chega (0,60 s) -> abre (0,55 s) -> ARTE FIXA 10 s, com o balanço que as peças já têm -> fecha em bolinha (0,55 s)
+    -> a bolinha vai embora (0,60 s). Chegada e saída fazem o mesmo arco balístico, uma espelhando a outra: a bola aparece (ou some) no
+    estágio apertado, uma bola MENOR e MAIS AMASSADA desenhada de novo (não é redimensionamento), e troca para a bola normal.
 
 Uso:
     from bola_cena import CicloBola, DUR
@@ -14,7 +15,7 @@ from PIL import Image
 from animfoto import ease_out, ease_io, sombra_papel, _bola
 from bola import estagios_amassados
 
-CHEGA, ABRE, FICA, FECHA, VAI, FOLGA = 0.45, 0.55, 10.0, 0.55, 0.75, 0.10
+CHEGA, ABRE, FICA, FECHA, VAI, FOLGA = 0.60, 0.55, 10.0, 0.55, 0.60, 0.10
 DUR = round(CHEGA + ABRE + FICA + FECHA + VAI + FOLGA, 2)
 T_ARTE = CHEGA + ABRE                      # instante em que a arte começa a contar os 10 s
 
@@ -29,9 +30,9 @@ def por(fr, im, cx, cy, rot=0.0, op=0.30):
     colar(fr, im, cx - im.width / 2, cy - im.height / 2)
 
 class CicloBola:
-    def __init__(self, camada, tamanho=(1080, 1920), lado_in=-1, lado_out=1, estagios=2, fica=FICA):
+    def __init__(self, camada, tamanho=(1080, 1920), lado_in=-1, lado_out=1, estagios=1, fica=FICA):
         self.camada, self.tam, self.lado_in, self.lado_out, self.n_est, self.fica = camada, tamanho, lado_in, lado_out, estagios, fica
-        self.dur = round(CHEGA + ABRE + fica + FECHA + VAI + FOLGA, 2); self._snap = None; self._est = None
+        self.dur = round(CHEGA + ABRE + fica + FECHA + VAI + FOLGA, 2); self._snap = None; self._est = {}
     def _fotos(self):
         """quadro inicial e final da arte, recortados na caixa que contém tudo. Viram a folha que se dobra em bolinha."""
         if self._snap is None:
@@ -41,16 +42,19 @@ class CicloBola:
                 res.append((L.crop(bb), ((bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2)))
             self._snap = res
         return self._snap
-    def _estagios(self):
-        """a bolinha de saída e as bolas menores e mais amassadas, desenhadas de novo (bola.estagios_amassados)"""
-        if self._est is None: self._est = estagios_amassados(_bola(self._fotos()[1][0], 'A').quadro(1.0), self.n_est)
-        return self._est
+    def _estagios(self, qual):
+        """a bola normal e as bolas menores e mais amassadas, desenhadas de novo (bola.estagios_amassados). qual = 0 entrada, 1 saída"""
+        if qual not in self._est: self._est[qual] = estagios_amassados(_bola(self._fotos()[qual][0], 'A').quadro(1.0), self.n_est)
+        return self._est[qual]
+    @staticmethod
+    def _arco(centro, lado, p):
+        """arco balístico da bolinha: p = 0 no ponto de pouso, p = 1 no ponto mais longe (a saída percorre de 0 a 1, a chegada de 1 a 0)"""
+        return centro[0] + lado * 430 * p, centro[1] - 300 * math.sin(math.pi * p * 0.85) + 120 * p * p
     def frame(self, fundo, t):
         W, H = self.tam; fr = fundo.copy(); (img_in, c_in), (img_out, c_out) = self._fotos()
-        if t < CHEGA:                                   # a bolinha chega, em arco, girando
-            p = ease_out(t / CHEGA); b = _bola(img_in, 'A').quadro(1.0); x0 = c_in[0] + self.lado_in * (W / 2 + 320); y0 = c_in[1] - 650
-            x = x0 + (c_in[0] - x0) * p; y = y0 + (c_in[1] - y0) * p - 330 * 4 * p * (1 - p)
-            por(fr, b, x, y, rot=self.lado_in * 520 * (1 - p)); return fr
+        if t < CHEGA:                                   # a bolinha chega pelo mesmo arco da saída, de trás para a frente: apertada, depois normal
+            p = 1 - t / CHEGA; est = self._estagios(0); k = min(len(est) - 1, int(p * len(est))); x, y = self._arco(c_in, self.lado_in, p)
+            por(fr, est[k], x, y, rot=-3 + self.lado_in * 300 * p); return fr
         if t < T_ARTE:                                  # abre
             u = (t - CHEGA) / ABRE; c = 1 - ease_io(u); im = _bola(img_in, 'A').quadro(c); por(fr, im, c_in[0], c_in[1], rot=-3 * c, op=0.30 * c); return fr
         if t < T_ARTE + self.fica:                      # arte parada na tela, com o balanço
@@ -59,8 +63,7 @@ class CicloBola:
         if v < FECHA:                                   # fecha em bolinha
             u = v / FECHA; c = ease_io(u); im = _bola(img_out, 'A').quadro(c); por(fr, im, c_out[0], c_out[1], rot=3 * c, op=0.30 * c); return fr
         v -= FECHA
-        if v < VAI:                                     # vai embora: bolas cada vez menores e mais amassadas, trocadas em stop motion, e some
-            p = v / VAI; est = self._estagios(); k = min(len(est) - 1, int(p * len(est)))
-            x = c_out[0] + self.lado_out * 430 * p; y = c_out[1] - 300 * math.sin(math.pi * p * 0.85) + 120 * p * p
-            por(fr, est[k], x, y, rot=self.lado_out * 300 * p); return fr
+        if v < VAI:                                     # vai embora: a bola normal, depois a apertada, trocadas em stop motion, e some
+            p = v / VAI; est = self._estagios(1); k = min(len(est) - 1, int(p * len(est))); x, y = self._arco(c_out, self.lado_out, p)
+            por(fr, est[k], x, y, rot=3 + self.lado_out * 300 * p); return fr
         return fr
