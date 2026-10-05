@@ -18,3 +18,6 @@ def numero_121():
 def carimbos():
     return Cena([Carimbo('INIMIGO', -1, 1e9, 540, 400, -6, tam=130, seed=1), Carimbo('TRAIDOR', -1, 1e9, 540, 580, 4, tam=130, seed=2), Carimbo('PARASITA', -1, 1e9, 540, 760, -3, tam=130, seed=3)], nome='carimbos')
 CENAS = {'foto_camara': foto_camara, 'numero_121': numero_121, 'carimbos': carimbos}      # urna e martelo desenhados foram descartados pelo usuário (ficaram ruins)
+
+from infograficos import CENAS_INFO
+CENAS.update(CENAS_INFO)
