@@ -8,7 +8,7 @@ Documento interno. Não entregar ao usuário como arquivo de leitura (regra: nun
 - O usuário assiste aos renders em MP4. Nada de Artifact ou página de prévia.
 - Legendas: o usuário coloca sozinho, embaixo. Não adicionar legendas.
 - Apresentador ocupa cerca de 60% da tela embaixo. Zoom de +30% em algumas frases.
-- CROP NA ALTURA DO UMBIGO (pedido explícito). CORTE_Y = 1190 em corte/chroma_quadro.py (estimativa por frames de 20 s e 130 s, topo da cabeça em y=232 e 314). Confirmar visualmente com o usuário no primeiro teste.
+- CROP APROVADO pelo usuário: CORTE_Y = 1288 em corte/chroma_quadro.py (medido sobre o crop que o usuário enviou). Chroma suavizado (lo=26, hi=60, miolo=2) também aprovado. Preferência: sobrar um pouco de verde a abrir buraco na camisa.
 - Não rodar análises pesadas sem responder antes às mensagens do usuário.
 - Highlighter nos títulos: uma passada contínua em velocidade constante. SFX de papel só nas tiras de título. Detalhes em motion-graphics/HANDOFF.md.
 
@@ -45,13 +45,13 @@ Baixar do Drive (arquivos compartilhados):
 - C0089.MP4 (id 1drk9KcXtdJFnSEg-kAr3_DZbGv9lC4uc) está corrompido e obsoleto. Não usar.
 
 ## Decisões do usuário sobre os vídeos
-- 1a e 1b: usar apenas o vídeo da pessoa mexendo no celular. Ainda não temos esse arquivo: pedir ao usuário que envie ou comprar no Magnific (id 6396250, 150 créditos, confirmar custo antes).
+- 1a e 1b: Smartphone_Bed (1920x1080, 10,36 s) enviado pelo usuário. Fora do repositório, recortar na vertical em torno das mãos. Não comprar no Magnific.
 - 2: Emotional_Office em câmera lenta (0,7x).
 - 3 (16b): usar Pregnant_Hospital (casal).
 - Sem vídeo de semente. Sem nova lista de download.
 
 ## Estado
-- Chroma: key_robusto + limpa_pretos + grade validados em teste de 6 quadros (chroma_teste_final.png) com crop de cintura. Precisa refazer teste com crop no umbigo e obter aprovação.
+- Chroma e crop aprovados pelo usuário. Branch de trabalho: claude/projeto-eleicao-handoff-486ojz.
 - Render completo: cerca de 5750 frames, 0,2 a 0,37 s por frame, Pool(4), 8 a 10 min. Evitar intermediários gigantes, preferir compor por frame na montagem.
 - Transcrição ainda não feita.
 
