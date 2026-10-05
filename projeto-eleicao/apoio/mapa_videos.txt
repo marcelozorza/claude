@@ -13,3 +13,9 @@ arquivo                                   duração   cena prevista             
 
 FALTAM: 1a (pessoa acordando e olhando o celular) e 1b (pessoa sorrindo para o celular).
 Não veio sala de espera de clínica para 16b. Pregnant_Hospital cobre, se você aprovar.
+
+DECISÕES DO USUÁRIO (5 de outubro)
+- 1a e 1b: usar um único vídeo, o da pessoa mexendo no celular. Arquivo ainda não está na pasta.
+- 7b: Emotional_Office em câmera lenta (0,7x) para chegar a 8 s.
+- 16b: usar o vídeo do casal (Pregnant_Hospital).
+- O bruto brutoempatia.mp4 (3 min 11 s, 1080x1920, 30 qps) já vem cortado pelo usuário. Não há tentativas repetidas.
