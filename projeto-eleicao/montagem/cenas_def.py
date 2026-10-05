@@ -12,7 +12,7 @@ def _foto(nome, h=480, maxw=820):
     im = Image.open(os.path.join(FOTOS, nome + ext)).convert('RGBA'); im.thumbnail((maxw, h), Image.LANCZOS); return recorte_jornal(im, seed=7)
 K = dict(t0=-1, t1=1e9, modo='fixo')
 def foto_camara():
-    return Cena([Cutout(_foto('camara'), cx=540, cy=575, rot=-2.5, fase=0.5, nome='foto câmara', **K), Etiqueta('Câmara dos Deputados', -1, 1e9, 330, 860, tam=44, rot=-3, fase=1.3)], nome='foto')
+    return Cena([Cutout(_foto('camara'), cx=540, cy=575, rot=-2.5, fase=0.5, nome='foto câmara', **K)], nome='foto')
 def numero_121():
     return Cena([Cutout(tira_texto('121', 230, seed=3, padx=120), cx=540, cy=520, rot=-2, fase=0.4, nome='121', **K), Etiqueta('deputados federais', -1, 1e9, 640, 700, tam=56, rot=3, fase=1.2)], nome='número')
 def carimbos():

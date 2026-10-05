@@ -61,7 +61,6 @@ class DorDeFora:
         for i in sorted(range(5), key=lambda k: self.off[k][1]):
             ox, oy = self.off[i]; b = bonecos[i]; compor(fr, b, cx + ox, cy + oy - 10 + 2.0 * math.sin(t * 2.0 + i * 1.3 + fase), rot=balanco(t, fase + i, 1.0) * 1.2, off=5, blur=5, op=0.22)
     def draw(self, fr, t):
-        self.et_in.draw(fr, t); self.et_out.draw(fr, t)
         self._grupo(fr, t, self.cin, self.d_in, self.b_in, 0.4); self._grupo(fr, t, self.cout, self.d_out, self.b_out, 1.9)
         # corações: o grande pulsa forte com a dor de um do grupo, o pequeno quase não mexe com a dor de alguém de fora
         s_in = 1.0 + 0.035 * math.sin(t * 3.0) + pulso(t, 1.1, 0.5, 0.22) + pulso(t, 1.7, 0.5, 0.20)
@@ -74,7 +73,6 @@ class DorDeFora:
                 sc = pop(t, t0) if t <= t1 else max(0.05, 1 - (t - t1) / 0.15); ox, oy = self.off[k]
                 compor(fr, com_escala(self.dor, 0.8 * sc), centro[0] + ox + 30, centro[1] + oy - 150, rot=balanco(t, 3.0, 1.0) * 2, off=6, blur=6, op=0.25)
         if 4.4 <= t <= 8.5: compor(fr, com_escala(self.sa, pop(t, 4.4)), self.cout[0], 580, rot=0, sombra=False)
-        self.menos.draw(fr, t)
 
 # ----------------------------------------------------------------------------------------- 22d
 class PrazerNoCerebro:
@@ -97,13 +95,6 @@ class PrazerNoCerebro:
             for a in range(0, 360, 40):
                 r0, r1 = 62 + 8 * k, 92 + 14 * k; ca, sa_ = math.cos(math.radians(a + 8 * math.sin(t))), math.sin(math.radians(a + 8 * math.sin(t))); d.line([px + r0 * ca, py + r0 * sa_, px + r1 * ca, py + r1 * sa_], fill=(255, 120, 30, 230), width=8)
             fr.alpha_composite(L)
-        if t >= 1.0:                                                 # seta curva da etiqueta até a região acesa
-            L = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(L); p0, p2 = (330, 770), (px - 30, py + 40); p1 = (px - 150, py + 150)
-            pts = [((1 - u) ** 2 * p0[0] + 2 * u * (1 - u) * p1[0] + u * u * p2[0], (1 - u) ** 2 * p0[1] + 2 * u * (1 - u) * p1[1] + u * u * p2[1]) for u in np.linspace(0, clamp((t - 1.0) / 0.5), 24)]
-            for a, b in zip(pts, pts[1:]): d.line([a, b], fill=TINTA, width=7)
-            if len(pts) > 20: seta(d, pts[-3], pts[-1], TINTA + (255,) if False else TINTA, 7, 26)
-            fr.alpha_composite(L)
-        self.et.draw(fr, t)
         if t >= 2.4:                                                 # o sorriso salta para fora do cérebro
             u = t - 2.4; dy = -180 * math.sin(math.pi * clamp(u / 0.7)) if u < 0.7 else 0.0; sc = pop(t, 2.4)
             compor(fr, com_escala(self.sorriso, sc), px + 190, py - 110 + dy + 6 * math.sin(t * 2.5), rot=balanco(t, 1.3, 1.0) * 3 + 10, off=8, blur=8, op=0.28)
@@ -153,8 +144,6 @@ class Ladeira:
         for im, x0, y0 in self.camadas: compor(L, im, P + x0 + im.width / 2, P + y0 + im.height / 2, rot=0, off=6, blur=7, op=0.22)
         bx = 170; by = self.li(bx) - 4
         compor(L, self.broto, P + bx, P + by - self.broto.height / 2 + 20, rot=3.5 * math.sin(t * 1.4) + balanco(t, 0.2, 1.0), off=6, blur=6, op=0.2)
-        compor(L, self.et1, P + 610, P + 70, rot=-2 + balanco(t, 2.0, 1.0), off=7, blur=7, op=0.25)
-        if t >= 1.4: compor(L, com_escala(self.et2, pop(t, 1.4)), P + 690, P + 170, rot=-3 + balanco(t, 1.1, 1.0), off=7, blur=7, op=0.25)
         r = self._rocha(t)
         if r is not None:
             sx, sy, rot, sc, ph, x = r; phi = math.atan(self.K)

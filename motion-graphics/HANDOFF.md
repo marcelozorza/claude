@@ -8,6 +8,7 @@ reutilizáveis** na estética da marca: papel quadriculado creme, recortes de pa
 Ele monta tudo manualmente. Não montar o vídeo inteiro nem entregar apresentador, legenda ou áudio, salvo pedido explícito.
 
 ## Regras do usuário
+- SEM TEXTO NARRANDO (6 de outubro): nunca escrever na tela texto que narre ou explique o que acontece no infográfico (rótulos, legendas, setas com palavras). A imagem se explica sozinha. Os títulos do roteiro quem coloca é o usuário na edição.
 - BOLA APROVADA (6 de outubro): o desenho final da bola (bola.py, bola_realista) foi aprovado pelo usuário. Não mexer mais: placas grandes e irregulares com tons bem diferentes, branco neutro, SEM linhas pretas finas. A bola do simulador de dobras troca para ela com corte seco aos 93% do fechamento.
 - NÃO DESENHAR OBJETOS (6 de outubro): urna e martelo desenhados ficaram ruins e foram descartados, e os infográficos desenhados ficaram sem sentido. Preferir fotos reais licenciadas, formas simples de papel (tiras, círculos, setas, carimbos) e tipografia. Estética papercraft (colagem de tiras e recortes de papel colorido em camadas) pode entrar aos poucos, só com formas geométricas simples.
 - PROCESSO (6 de outubro): ir mais devagar. Gerar de 1 a 3 cenas por vez, cada uma em arquivo próprio, com o NÚMERO DA CENA DA DECUPAGEM no nome (ex.: cena_01c_...). O usuário revisa e corrige cada uma separado. Sempre dizer o número da cena ao entregar. Na montagem anterior ele se perdeu nos números e cortou muita coisa.
