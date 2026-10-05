@@ -8,6 +8,7 @@ reutilizáveis** na estética da marca: papel quadriculado creme, recortes de pa
 Ele monta tudo manualmente. Não montar o vídeo inteiro nem entregar apresentador, legenda ou áudio, salvo pedido explícito.
 
 ## Regras do usuário
+- REGRA DEFINITIVA (6 de outubro): nunca mais gerar o vídeo inteiro montado. Gerar somente CENAS em arquivos separados, só o que vai atrás do apresentador (fundo, peças, vídeos de apoio), com o tempo de cada cena indicado no nome ou em lista. O usuário monta tudo sozinho no editor. Não montar, não sobrepor o apresentador, não entregar prévia do vídeo completo. A tentativa de montagem inteira não funciona para este tipo de vídeo e foi abandonada.
 - Responder em português. Tom direto, formal, sóbrio. Sem travessão, sem ponto e vírgula, sem a fórmula "não é X, é Y".
 - Confirmar antes de gastar créditos (Magnific, por exemplo) e informar o custo.
 - Nada de animação "estilo JavaScript". Sem fade ou morph sem lógica física. Tudo se dobra, rasga, desliza ou cai de verdade.

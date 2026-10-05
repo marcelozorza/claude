@@ -3,6 +3,7 @@
 Documento interno. Não entregar ao usuário como arquivo de leitura (regra: nunca .md, só .docx ou .txt).
 
 ## Regras do usuário
+- REGRA DEFINITIVA (6 de outubro): nunca mais gerar o vídeo inteiro montado. Gerar somente CENAS em arquivos separados, só o que vai atrás do apresentador (fundo, peças, vídeos de apoio), com o tempo de cada cena indicado no nome ou em lista. O usuário monta tudo sozinho no editor. Não montar, não sobrepor o apresentador, não entregar prévia do vídeo completo. A tentativa de montagem inteira não funciona para este tipo de vídeo e foi abandonada.
 - Português, tom direto, formal e sóbrio. Sem travessão, sem ponto e vírgula, sem a fórmula "não é X, é Y".
 - Confirmar antes de gastar créditos do Magnific e informar o custo.
 - O usuário assiste aos renders em MP4. Nada de Artifact ou página de prévia.
@@ -62,7 +63,15 @@ Baixar do Drive (arquivos compartilhados):
 - Magnific: busca em stock é grátis, download gasta crédito.
 - Verificar números da eleição de 2026 (não confirmáveis após junho de 2026) e grafia dos títulos.
 
+## Estado após a montagem (6 de outubro)
+- O usuário montou o vídeo sozinho e não pedirá mais montagem. Código usado na tentativa: projeto-eleicao/montagem/montar_eleicao.py, pecas.py e folha.py (reaproveitar as peças como base para cenas avulsas). Variável SEM_APRESENTADOR=1 já gera o fundo sem a figura.
+- Entregues: prévia 540x960 com apresentador e o fundo 1080x1920 sem apresentador (em 4 partes por limite de envio, 77 MB não sobe). Arquivos acima de uns 25 MB devem ser divididos.
+- Fotos do Commons e créditos: projeto-eleicao/creditos.txt. Enquadramento do apresentador: CORTE_Y 1288, âncora horizontal CX 462.
+
 ## Próximo passo
+Só cenas separadas sobre pedido do usuário, uma por arquivo. Ver a regra definitiva acima. Itens antigos abaixo valem só como histórico.
+
+## Histórico do plano anterior
 1. Baixar brutoempatia.mp4 e os vídeos de apoio.
 2. Rodar chroma_quadro.py em 6 tempos com CORTE_Y=1190, enviar a imagem ao usuário e pedir aprovação do crop e da cor.
 3. Rodar transcrever.py e posicionar as peças da decupagem_v2.
