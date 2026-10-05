@@ -72,3 +72,10 @@ Campo em branco: nada entra na tela naquele campo. "continua anterior" e "repete
 26b Mereciam consultas compulsórias com psicólogos e psiquiatras. | [G] prancheta adesivo (a que já existe)
 27a A empatia não é o defeito da civilização. | [G] a citação do Musk riscada com X vermelho | nenhum
 27b Ela é o que permitiu que existisse uma civilização. | logo nada errado
+
+DECISÕES DO USUÁRIO (5 de outubro)
+- 11c: os carimbos INIMIGO, TRAIDOR e PARASITA batem direto na tela, sobre o papel quadriculado do fundo. Sem bonecos.
+- "logo nada errado": sempre o mesmo logo redondo (edicao-chroma/dados/logo_redondo.png), com a mesma animação de pop (escala, 0,22 s) nas cinco aparições: 11a, 18, 19c a 20 (uma só, mantém), 27b. Sem variações.
+- Quando a decupagem diz "continua" ou "repete", a imagem fica parada mesmo. Nenhuma troca extra, nem caneta de novo, nem zoom.
+- Vídeo de terra e semente (23a) fora do plano e fora da lista de download.
+- Vídeos de apoio a baixar (10): 1a acordando, 1b sorrindo no celular, 4 Congresso, 5a Esplanada, 7b pessoa de cabeça baixa, 9a biblioteca (opcional), 10a e 10b multidão diversa, 13b microfone de podcast, 16b sala de espera, 17 enfermeira atendendo.
