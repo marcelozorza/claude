@@ -82,7 +82,10 @@ def _extensao(pilha, n, centro):
 
 
 class BolaPapel:
-    def __init__(self, img, modo='A', seed=3):
+    def __init__(self, img, modo='A', seed=3, n_fac=70, forca=1.0, irr=1.0):
+        """n_fac: quantidade de placas do amassado, forca: intensidade dos vincos, irr: irregularidade da silhueta (1 = bola padrão).
+        Valores maiores dão uma bola mais amassada. Use junto com estagios_amassados()."""
+        self.forca, self.irr = forca, irr
         self.img = img.convert('RGBA')
         self.W, self.H = self.img.size
         self.tex = np.array(self.img).astype(np.float32)
@@ -109,7 +112,7 @@ class BolaPapel:
         self.N = len(self.dobras)
         # sombreamento de amassado (placas e vincos, bem suaves)
         from papel import _facetas
-        F, B = _facetas(self.H, self.W, seed + 40, n=70)
+        F, B = _facetas(self.H, self.W, seed + 40, n=n_fac)
         self.F = ndi.gaussian_filter(F, 4); self.B = ndi.gaussian_filter(B, 1.6)
         self.var = rng.uniform(-0.02, 0.02, 200)
         from papel import _ruido
@@ -199,7 +202,7 @@ class BolaPapel:
         H, W = self.H, self.W
         prog = min(1.0, c / bola_a)
         k = prog ** 1.2
-        sh = 1 + k * (0.045 * np.clip(self.F, -1.5, 1.5) - 0.085 * self.B)     # placas e vincos do amassado
+        sh = 1 + k * self.forca * (0.045 * np.clip(self.F, -1.5, 1.5) - 0.085 * self.B)     # placas e vincos do amassado
         out[..., :3] *= sh[..., None]
         q = max(0.0, (c - bola_a) / (1 - bola_a))
         if q <= 0:
@@ -218,7 +221,7 @@ class BolaPapel:
         out = np.stack([ndi.map_coordinates(out[..., k_], [sy, sx], order=1, mode='constant', cval=0) for k_ in range(4)], -1)
         # 2) o que passa do círculo é dobrado para dentro (cortado) e o círculo se completa com papel
         ang = np.arctan2(yy - cy, xx - cx)
-        irr = 1 + 0.045 * np.sin(5 * ang + 1.3) + 0.03 * np.sin(8 * ang + 0.4) + 0.02 * np.sin(13 * ang)
+        irr = 1 + self.irr * (0.045 * np.sin(5 * ang + 1.3) + 0.03 * np.sin(8 * ang + 0.4) + 0.02 * np.sin(13 * ang)) + max(0.0, self.irr - 1) * (0.012 * np.sin(21 * ang + 0.7) + 0.008 * np.sin(34 * ang + 2.1))
         borda = R * 0.98 * irr
         disco = np.clip((borda - dist) / 1.8 + 0.5, 0, 1)
         permitido = np.clip((borda * (1 + 0.9 * (1 - q) ** 1.5) - dist) / 1.8 + 0.5, 0, 1)
@@ -228,7 +231,7 @@ class BolaPapel:
         nz = np.sqrt(np.clip(1 - rr * rr, 0, 1))
         lamb = np.clip(-0.45 * nx - 0.55 * ny + 0.75 * nz, 0, 1)
         esf = 1 - q * (1 - (0.60 + 0.46 * lamb))
-        crum = 1 + q * (0.10 * np.clip(self.F, -1.5, 1.5) - 0.22 * self.B)
+        crum = 1 + q * self.forca * (0.10 * np.clip(self.F, -1.5, 1.5) - 0.22 * self.B)
         papel = PAPEL[None, None, :] * (1 + 0.05 * np.clip(self.F, -1.5, 1.5) - 0.10 * self.B)[..., None]
         fora = np.clip(1 - out[..., 3:4], 0, 1)
         out[..., :3] = out[..., :3] * (1 - fora) + papel * fora
@@ -239,3 +242,21 @@ class BolaPapel:
         res = np.dstack([np.clip(out[..., :3], 0, 255), a * 255]).astype(np.uint8)
         im = Image.fromarray(res, 'RGBA')
         return im.transform(im.size, Image.AFFINE, (1, 0, -dx, 0, 1, -dy), resample=Image.BILINEAR)
+
+
+def _caixa(im, margem=6):
+    bb = im.getchannel('A').point(lambda v: 255 if v > 8 else 0).getbbox() or (0, 0, im.width, im.height)
+    return im.crop((max(0, bb[0] - margem), max(0, bb[1] - margem), min(im.width, bb[2] + margem), min(im.height, bb[3] + margem)))
+
+def estagios_amassados(bola, n=2, seed=11, reducao=0.72):
+    """A partir da bola de papel já pronta (imagem RGBA, de BolaPapel.quadro(1.0)), desenha n bolas MENORES e cada vez MAIS AMASSADAS.
+    Cada estágio dobra de novo a bola anterior (não é redimensionamento da imagem pronta): mais placas, vincos um pouco mais fortes e
+    silhueta mais irregular, redesenhados na resolução final. reducao = tamanho de cada estágio em relação ao anterior (aproximado).
+    Devolve [bola, estágio_1, ..., estágio_n], todas recortadas na caixa da bola."""
+    out = [_caixa(bola)]
+    for k in range(1, n + 1):
+        prev = out[-1]; e = 2.5 * reducao
+        base = prev.resize((int(prev.width * e), int(prev.height * e)), Image.LANCZOS)
+        b = BolaPapel(base, 'A', seed=seed + 12 * k, n_fac=70 + 55 * k, forca=1.0 + 0.30 * k, irr=1.0 + 0.45 * k)
+        out.append(_caixa(b.quadro(1.0)))
+    return out
