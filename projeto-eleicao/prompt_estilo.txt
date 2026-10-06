@@ -1,0 +1,32 @@
+Você vai continuar um projeto de vídeos verticais (1080x1920, 30 fps) do canal Nada Errado com VC, no estilo de explicativo em colagem de papel, parecido com os vídeos da Vox. Eu falo português e prefiro tom direto, formal e sóbrio. Não use travessão, ponto e vírgula nem a fórmula "não é X, é Y". Confirme comigo antes de gastar créditos (Magnific) e informe o custo. Não entregue arquivos .md, use .txt ou .docx.
+
+CONTEXTO TÉCNICO
+O código e as notas estão em https://github.com/marcelozorza/claude, branch claude/projeto-eleicao-handoff-486ojz. Clone e leia primeiro projeto-eleicao/HANDOFF.md e motion-graphics/HANDOFF.md. Hoje quero testar fazer as animações no After Effects, que está aberto neste PC com o painel MCP Bridge Auto, usando as ferramentas nativas dele e o feedback visual, em vez do kit em Python.
+
+ESTILO DE ARTE
+1. Fundo: sempre papel quadriculado creme (motion-graphics/assets/graph_paper_1080x1920.png).
+2. Tipografia: EB Garamond itálico (motion-graphics/fonts). Destaque com marca-texto amarelo que passa uma vez, em velocidade constante. Títulos em tira de papel rasgado.
+3. Paleta: creme #F1E5C9, tinta #241E1A, amarelo marca-texto #FFE200, vermelho #CC2228 (só para ênfase, carimbo, X ou seta), azul #5696B0, terracota #E27A5C, verde #6EAA70.
+4. Desenho dos infográficos: pictogramas no estilo ISO 7001. Formas chapadas, cor sólida, sem contorno, sem borda branca e sem sombra. A figura humana é uma cabeça redonda com barras arredondadas (tronco, braços, pernas), de frente ou de lado. A versão anterior, com borda branca de papel e sombra, foi considerada feia. Referência extra, a usar aos poucos: colagem de tiras de papel colorido em camadas (papercraft), só com formas geométricas simples.
+5. Não desenhe objetos complicados (urna e martelo ficaram ruins). Prefira formas simples, tipografia e fotos reais licenciadas do Wikimedia Commons, com crédito. Pessoas reais só em foto licenciada, nunca invente o rosto de alguém real. Não use modelos de vídeo de IA.
+6. Nunca escreva na tela texto que narre o infográfico. A imagem se explica sozinha. Os títulos do roteiro eu coloco na edição.
+7. Faixa proibida: nada nos 15% de cima do quadro (y menor que 288 em 1920), por causa da interface do Instagram. Embaixo pode, porque é onde eu apareço, ocupando cerca de 60% da tela. A arte fica entre y=288 e uns y=800.
+8. Movimento: tudo balança poucos graus no próprio eixo. Entradas e saídas com lógica física, sem fade nem morph sem lógica. Prefiro stop motion (cortar quadros) a acelerar.
+
+ESTRUTURA DE CADA CENA
+• Um arquivo de vídeo por cena, fechado em si, com o NÚMERO DA CENA no nome. Nunca monte o vídeo inteiro.
+• Entregue de 1 a 3 cenas por vez. Eu reviso e corrijo cada uma separado, apontando só o número (por exemplo, I2 quadro 4).
+• Sequência: a bolinha de papel chega em arco balístico (0,6 s), abre (0,55 s), ficam 10 s de arte na tela com balanço leve (sempre 10 s, nunca parada), fecha em bolinha (0,55 s) e vai embora pelo mesmo arco (0,6 s). Total 12,4 s. Nada de outra cena na tela durante a abertura ou o fechamento. Gere a mais, eu corto na edição e nunca estico.
+• A bola aprovada tem placas grandes e irregulares, branco neutro e nenhuma linha preta fina. Na entrada e na saída aparece um degrau de bola menor e mais apertada, desenhada de novo (não redimensionada). Código em motion-graphics/lib/bola.py e bola_cena.py. Se o After Effects não reproduzir isso bem, proponha uma alternativa e me mostre.
+
+PROCESSO
+Antes de renderizar, desenhe um storyboard de cada cena, com quadros em sequência e o tempo aproximado, só com número e tempo, sem texto narrando. Mostre para eu aprovar e depois construa. Diga sempre o número da cena ao entregar.
+
+ESTADO ATUAL
+Roteiro de 05/10 com cinco infográficos, I1 a I5, na ordem do roteiro:
+I1 as duas dores (uma flecha acerta o peito e duas outras partem antes de chegar).
+I2 o humor pinta os pensamentos (nuvens claras ficam cinza e se soltam).
+I3 respirar com a expiração mais longa (círculo que cresce rápido e encolhe devagar, com onda e duas barras).
+I4 sem volta, só para cima (ladrilhos desabam atrás e degraus sobem à frente).
+I5 o pequeno que continua (curva de fúria que despenca, linha fina que segue e cartazes formando uma seta para cima).
+Os storyboards em pictograma estão em projeto-eleicao/storyboards/*_pictograma.png. Comece pelo I1 no After Effects, em 1080x1920, e me mostre o resultado antes de seguir.
