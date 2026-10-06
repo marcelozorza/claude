@@ -36,8 +36,8 @@ Estrutura padrão de cada cena (12,4 s)
 - projeto-eleicao/prompt_estilo.txt: prompt de estilo para colar numa sessão nova (usado na sessão local do After Effects).
 - Montagem inteira abandonada, mas o código fica: montar_eleicao.py e corte/chroma_quadro.py (chroma e crop aprovados, CORTE_Y 1288, âncora CX 462), transcricao.json, decupagem_v2.txt, roteiro.txt.
 
-## Roteiro de 05/10, 19:07 e os cinco infográficos
-Numerados na ordem do roteiro. Todos sem texto na tela.
+## VÍDEO ANTERIOR (05/10, 19:07), EM PAUSA: os cinco infográficos I1 a I5
+Só retomar se o usuário pedir. Numerados na ordem do roteiro. Todos sem texto na tela.
 - I1 As duas dores que vêm depois: uma flecha acerta o peito do boneco (inevitável), duas outras partem antes de chegar e caem.
 - I2 O humor pinta os pensamentos: nuvens claras em volta do boneco ficam cinza, se soltam e vão embora.
 - I3 Respirar com a expiração mais longa: círculo cresce rápido e encolhe devagar, onda de subida curta e descida longa, duas barras (curta amarela, longa azul).
@@ -45,7 +45,7 @@ Numerados na ordem do roteiro. Todos sem texto na tela.
 - I5 O pequeno que continua: curva vermelha de fúria dispara e despenca, linha azul fina segue, cartazes de papel formam uma SETA para cima (nunca uma cruz).
 Estado: storyboards em pictograma enviados ao usuário, SEM resposta ainda. Sugestão de primeira rodada: I1, I3 e I4.
 
-## Perguntas ao usuário sem resposta
+## Perguntas em aberto do vídeo anterior (só retomar se o usuário pedir)
 1. Quais storyboards em pictograma aprova, o que muda, e por quais cenas começar.
 2. A bolinha de papel (com borda branca e fibras) ainda faz sentido com peças sem borda, ou prefere outra transição para esse estilo?
 3. O limite de cima é 15% (y 288), como combinado, ou chega a 20% (y 384)? Usado 15%.
@@ -57,10 +57,12 @@ Estado: storyboards em pictograma enviados ao usuário, SEM resposta ainda. Suge
 - Avaliado e NÃO adotado: JohnHeibel/ClaudeAnimationBase (p5.js e p5.brush, 40 s por quadro sem GPU, estilo de tinta e aquarela, mascote Clawd). Ideias aproveitáveis: princípios de animação (antecipação, sobra de movimento, suavização, peso) e a folha de leituras por cena. O usuário não aprovou aplicá-las.
 
 ## Próximo passo
-1. Ler a resposta do usuário sobre os storyboards (perguntas acima). Se ele não respondeu, perguntar antes de construir.
-2. Com a aprovação, animar as cenas aprovadas em pictograma com o kit em Python: criar montagem/infograficos_picto.py reaproveitando pictogramas.py e os quadros-chave de storyboards_picto.py, interpolando entre eles com movimento físico e balanço, registrar em cenas_def.py com id numerado (exemplo: I1_duas_dores) e gerar com gerar_cenas.py (escala 0.5 para conferir).
-3. Atenção: CicloBola faz a bola a partir do quadro inicial e do final da arte, então com peças chapadas a silhueta da bola será a união das peças. Conferir e, se ficar estranho, colocar a arte sobre uma folha única.
-4. Entregar 1 a 3 cenas por vez, MP4 em 540p, dizendo o número de cada uma. Registrar neste arquivo o que foi aprovado.
+O usuário vai começar um VÍDEO NOVO. Não há tarefa de construção pendente.
+1. Perguntar o que o usuário traz: roteiro, tema e data. Não assumir nada do vídeo anterior.
+2. Com o roteiro, propor os trechos que mais rendem infográfico. Critérios que funcionaram: o trecho tem uma metáfora visual clara, dá para desenhar com formas simples (pictograma chapado, sem texto na tela) e a imagem ajuda mais do que a fala sozinha. Numerar na ordem do roteiro. Sugestão: usar o prefixo do vídeo no número (por exemplo V2_I1) para não confundir com I1 a I5 do vídeo anterior.
+3. Antes de construir, mostrar um STORYBOARD DESENHADO de cada infográfico (montagem/storyboards_picto.py serve de modelo) e esperar a aprovação.
+4. Construir 1 a 3 cenas por vez, com o kit em Python e a estrutura de cena de 12,4 s, MP4 em 540p, dizendo o número de cada uma. Seguir todas as regras acima, incluindo a faixa de cima proibida e nada de texto narrando.
+5. Registrar neste arquivo o que o usuário aprovar.
 
 ## Armadilhas
 - Nunca usar `pkill -f` ou `pgrep -f`: mata o próprio shell. Sem `sleep` em primeiro plano: usar run_in_background com laço until.

@@ -23,10 +23,4 @@ PROCESSO
 Antes de renderizar, desenhe um storyboard de cada cena, com quadros em sequência e o tempo aproximado, só com número e tempo, sem texto narrando. Mostre para eu aprovar e depois construa. Diga sempre o número da cena ao entregar.
 
 ESTADO ATUAL
-Roteiro de 05/10 com cinco infográficos, I1 a I5, na ordem do roteiro:
-I1 as duas dores (uma flecha acerta o peito e duas outras partem antes de chegar).
-I2 o humor pinta os pensamentos (nuvens claras ficam cinza e se soltam).
-I3 respirar com a expiração mais longa (círculo que cresce rápido e encolhe devagar, com onda e duas barras).
-I4 sem volta, só para cima (ladrilhos desabam atrás e degraus sobem à frente).
-I5 o pequeno que continua (curva de fúria que despenca, linha fina que segue e cartazes formando uma seta para cima).
-Os storyboards em pictograma estão em projeto-eleicao/storyboards/*_pictograma.png. Comece pelo I1 no After Effects, em 1080x1920, e me mostre o resultado antes de seguir.
+Vou começar um vídeo novo. Não há tarefa pendente. Espere eu enviar o roteiro. Os infográficos I1 a I5 do vídeo anterior (storyboards em projeto-eleicao/storyboards/*_pictograma.png) servem só como exemplo de estilo e de formato de storyboard. Quando eu enviar o roteiro, proponha os trechos que mais rendem infográfico e mostre um storyboard de cada antes de construir.
