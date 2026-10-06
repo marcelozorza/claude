@@ -2,6 +2,9 @@
 
 Documento interno. Não entregar ao usuário como arquivo. Regra do usuário: nunca entregar .md, só .txt ou .docx.
 
+## Contexto importante (6 de outubro)
+O usuário está TESTANDO FLUXOS DE TRABALHO, qualidade e gasto de tokens. Não precisa terminar este projeto e pode começar algo totalmente diferente. Não pressionar para concluir os infográficos. Ao propor trabalho, priorizar o que gasta menos tokens: poucas imagens de conferência, verificações numéricas no lugar de olhar quadros, storyboard antes de renderizar, lotes pequenos.
+
 ## Como começar numa sessão nova na nuvem
 1. Mude para a branch de trabalho: `git fetch origin claude/projeto-eleicao-handoff-486ojz` e `git checkout claude/projeto-eleicao-handoff-486ojz`. A branch padrão do remoto (claude/magnific-resource-search-x7f2iy) NÃO tem esta pasta. O usuário autorizou trabalhar e dar push em claude/projeto-eleicao-handoff-486ojz.
 2. Dependências: python3 com pillow, numpy e scipy (`pip install pillow numpy scipy`), ffmpeg e uma fonte DejaVu. A fonte EB Garamond itálico está em motion-graphics/fonts.
