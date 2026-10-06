@@ -1,5 +1,8 @@
 # HANDOFF: motion graphics do vídeo "voto" (Nada Errado com VC)
 
+> ATENÇÃO (6 de outubro de 2026): o estado atual e o próximo passo estão em projeto-eleicao/HANDOFF.md. Este arquivo guarda o histórico do kit de motion graphics, e as regras novas do usuário (estilo chapado, faixa de cima proibida, cenas de 12,4 s) valem mais do que as antigas aqui.
+
+
 Leia este arquivo e comece pelo item **Próximo passo**. Não é preciso reler a conversa anterior.
 
 ## Contexto
