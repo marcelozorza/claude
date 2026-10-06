@@ -54,6 +54,7 @@ Estado: storyboards em pictograma enviados ao usuário, SEM resposta ainda. Suge
 ## After Effects (sessão local, fora da nuvem)
 - O usuário testa After Effects com MCP no PC. Painel instalado: "MCP Bridge Auto" (TheLlamainator/after-effects-mcp, comunicação por arquivos em Documents\ae-mcp-bridge: ae_command.json e ae_mcp_result.json). Esse MCP não documenta preview nem render. Alternativas: LiamcKerr/after-effects-mcp (tem ae_preview_frame, só local) e aftr (renderiza e confere os quadros).
 - Esta sessão na nuvem não alcança o PC. A sessão local (Claude Desktop ou `claude remote-control`) usa projeto-eleicao/prompt_estilo.txt. As duas sessões compartilham o repositório: fazer pull antes de push e não editar os mesmos arquivos.
+- RESULTADO DO TESTE (6 de outubro): o usuário comparou a cena I1 feita no After Effects com a feita no kit em Python (versões em projeto-eleicao/montagem/infograficos_picto.py, ids I1_duas_dores e I1_duas_dores_papel) e disse que a qualidade é a mesma. Decisão PROVISÓRIA: seguir com o kit em Python na nuvem, que funciona do celular e itera mais rápido. O After Effects fica como opção, sem precisar configurar mais nada. Confirmar com o usuário se algo mudar.
 - Avaliado e NÃO adotado: JohnHeibel/ClaudeAnimationBase (p5.js e p5.brush, 40 s por quadro sem GPU, estilo de tinta e aquarela, mascote Clawd). Ideias aproveitáveis: princípios de animação (antecipação, sobra de movimento, suavização, peso) e a folha de leituras por cena. O usuário não aprovou aplicá-las.
 
 ## Próximo passo
