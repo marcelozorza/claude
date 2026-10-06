@@ -21,3 +21,5 @@ CENAS = {'foto_camara': foto_camara, 'numero_121': numero_121, 'carimbos': carim
 
 from infograficos import CENAS_INFO
 CENAS.update(CENAS_INFO)
+from infograficos_picto import CENAS_PICTO
+CENAS.update(CENAS_PICTO)
